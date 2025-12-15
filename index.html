@@ -395,15 +395,15 @@
                 </section>
             </main>
 
-            <footer class="fixed bottom-0 left-0 w-full p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/5 z-50">
-                <div class="max-w-md mx-auto flex items-center gap-4">
+            <footer class="fixed bottom-20 left-0 w-full px-4 py-3 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-black/5 dark:border-white/5 z-[60]">
+                <div class="max-w-md mx-auto flex items-center gap-3">
                     <div class="flex flex-col">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Total to pay</span>
-                        <span id="cart-pay-total" class="text-xl font-bold text-black dark:text-white">৳ 0</span>
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Total</span>
+                        <span id="cart-pay-total" class="text-lg font-bold text-black dark:text-white">৳ 0</span>
                     </div>
-                    <button id="pay-now-btn" class="flex-1 h-14 bg-primary hover:bg-[#46b326] active:scale-[0.98] transition-all rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
-                        <span class="text-black text-lg font-extrabold tracking-wide">PAY NOW</span>
-                        <span class="material-symbols-outlined text-black">arrow_forward</span>
+                    <button id="pay-now-btn" class="flex-1 h-12 bg-primary hover:bg-[#46b326] active:scale-[0.98] transition-all rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                        <span class="text-black text-base font-extrabold tracking-wide">PAY NOW</span>
+                        <span class="material-symbols-outlined text-black text-[20px]">arrow_forward</span>
                     </button>
                 </div>
             </footer>
@@ -450,11 +450,11 @@
                 </div>
             </div>
 
-            <div class="fixed bottom-0 left-0 right-0 z-50 p-6 pt-2 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent">
-                <div class="flex flex-col gap-3 max-w-md mx-auto">
-                    <button id="add-more-btn" class="w-full bg-primary hover:bg-green-500 text-black font-extrabold text-lg py-4 rounded-full shadow-[0_0_20px_rgba(83,210,45,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined">add_circle</span>
-                        Forgot something? Add to Order
+            <div class="fixed bottom-20 left-0 right-0 z-[60] px-4 pb-2">
+                <div class="flex flex-col gap-2 max-w-md mx-auto">
+                    <button id="add-more-btn" class="w-full bg-primary hover:bg-green-500 text-black font-bold text-sm py-3 rounded-full shadow-[0_0_15px_rgba(83,210,45,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                        Forgot something? Add more
                     </button>
                 </div>
             </div>
@@ -609,11 +609,13 @@
                 </div>
             </div>
 
-            <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent pt-12">
-                <button id="feedback-submit-btn" class="w-full h-14 rounded-full bg-primary hover:bg-[#45b822] active:bg-[#3ba01c] flex items-center justify-center gap-2 shadow-[0_8px_20px_-6px_rgba(83,210,45,0.5)] transition-all transform active:scale-[0.98]">
-                    <span class="text-black text-lg font-bold tracking-wide">Submit Feedback</span>
-                    <span class="material-symbols-outlined text-black">arrow_forward</span>
-                </button>
+            <div class="fixed bottom-20 left-0 w-full px-4 pb-2 z-[60]">
+                <div class="max-w-md mx-auto">
+                    <button id="feedback-submit-btn" class="w-full h-12 rounded-full bg-primary hover:bg-[#45b822] active:bg-[#3ba01c] flex items-center justify-center gap-2 shadow-[0_8px_20px_-6px_rgba(83,210,45,0.5)] transition-all transform active:scale-[0.98]">
+                        <span class="text-black text-base font-bold tracking-wide">Submit Feedback</span>
+                        <span class="material-symbols-outlined text-black text-[20px]">arrow_forward</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
