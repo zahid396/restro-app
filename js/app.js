@@ -68,6 +68,15 @@ class RestaurantApp {
             this.screens[screenName].classList.remove('hidden');
             window.scrollTo(0, 0);
         }
+        
+        const bottomNav = document.getElementById('bottom-nav');
+        if (bottomNav) {
+            if (screenName === 'detail') {
+                bottomNav.classList.add('hidden');
+            } else {
+                bottomNav.classList.remove('hidden');
+            }
+        }
     }
 
     bindGlobalEvents() {
