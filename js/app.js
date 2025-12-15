@@ -146,21 +146,6 @@ class RestaurantApp {
             });
         });
 
-        const splitMinusBtn = document.getElementById('split-minus');
-        const splitPlusBtn = document.getElementById('split-plus');
-        
-        if (splitMinusBtn) {
-            splitMinusBtn.addEventListener('click', () => {
-                this.updateSplitCount(-1);
-            });
-        }
-        
-        if (splitPlusBtn) {
-            splitPlusBtn.addEventListener('click', () => {
-                this.updateSplitCount(1);
-            });
-        }
-
         document.querySelectorAll('[data-payment-method]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const method = e.currentTarget.dataset.paymentMethod;
@@ -380,21 +365,21 @@ class RestaurantApp {
     renderTrendingCard(item, lang) {
         const name = item.name[lang] || item.name.en;
         return `
-        <div class="flex flex-col bg-white dark:bg-card-dark rounded-2xl shadow-md overflow-hidden relative group cursor-pointer" data-item-id="${item.id}">
+        <div class="flex flex-col w-[260px] bg-white dark:bg-card-dark rounded-2xl shadow-md overflow-hidden relative group cursor-pointer" data-item-id="${item.id}">
             <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 bg-center bg-cover" style='background-image: url("${item.image}");'></div>
-            <button class="absolute top-2 right-2 bg-white dark:bg-card-dark rounded-full p-1.5 shadow-lg z-10 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors" data-favorite="${item.id}">
-                <span class="material-symbols-outlined text-[18px]">favorite</span>
+            <button class="absolute top-[230px] right-4 bg-white dark:bg-card-dark rounded-full p-2 shadow-lg z-10 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors" data-favorite="${item.id}">
+                <span class="material-symbols-outlined text-[20px]">favorite</span>
             </button>
-            <div class="p-3 flex flex-col gap-1">
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">${name}</h3>
-                <div class="flex items-center gap-3 mt-1">
-                    <div class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-orange-500 text-[14px]">thumb_up</span>
-                        <span class="text-xs font-semibold text-text-muted">${this.formatNumber(item.likes)}</span>
+            <div class="p-4 pt-6 flex flex-col gap-1">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">${name}</h3>
+                <div class="flex items-center gap-6 mt-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-orange-500 text-[18px]">thumb_up</span>
+                        <span class="text-sm font-semibold text-text-muted">${this.formatNumber(item.likes)}</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-blue-400 text-[14px]">chat_bubble</span>
-                        <span class="text-xs font-semibold text-text-muted">${item.comments}</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-blue-400 text-[18px]">chat_bubble</span>
+                        <span class="text-sm font-semibold text-text-muted">${item.comments}</span>
                     </div>
                 </div>
             </div>
@@ -639,13 +624,13 @@ class RestaurantApp {
                         ${ci.customizations ? `<p class="text-gray-500 dark:text-gray-400 text-xs mt-1">${ci.customizations}</p>` : ''}
                     </div>
                     <div class="flex justify-end">
-                        <div class="flex items-center gap-2 bg-black/5 dark:bg-black/20 rounded-full px-2 py-1">
-                            <button class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-white/10 text-black dark:text-white shadow-sm shrink-0" data-cart-minus="${index}">
-                                <span class="material-symbols-outlined text-[18px]">remove</span>
+                        <div class="flex items-center gap-3 bg-black/5 dark:bg-black/20 rounded-full p-1">
+                            <button class="size-7 flex items-center justify-center rounded-full bg-white dark:bg-white/10 text-black dark:text-white shadow-sm" data-cart-minus="${index}">
+                                <span class="material-symbols-outlined text-[16px]">remove</span>
                             </button>
-                            <span class="text-sm font-bold text-black dark:text-white min-w-[24px] text-center">${ci.quantity}</span>
-                            <button class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-black shadow-sm shrink-0" data-cart-plus="${index}">
-                                <span class="material-symbols-outlined text-[18px]">add</span>
+                            <span class="text-sm font-bold text-black dark:text-white w-2 text-center">${ci.quantity}</span>
+                            <button class="size-7 flex items-center justify-center rounded-full bg-primary text-black shadow-sm" data-cart-plus="${index}">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
                             </button>
                         </div>
                     </div>
@@ -685,14 +670,9 @@ class RestaurantApp {
         document.getElementById('cart-service').textContent = `৳ ${service.toLocaleString()}`;
         document.getElementById('cart-total').textContent = `৳ ${total.toLocaleString()}`;
         document.getElementById('cart-pay-total').textContent = `৳ ${total.toLocaleString()}`;
-        
-        if (this.billSplitMode === 'split') {
-            this.updateSplitDisplay();
-        }
     }
 
     setBillSplitMode(mode) {
-        this.billSplitMode = mode;
         document.querySelectorAll('[data-bill-split]').forEach(btn => {
             if (btn.dataset.billSplit === mode) {
                 btn.classList.add('bg-white', 'dark:bg-white/10', 'shadow-sm');
@@ -702,46 +682,6 @@ class RestaurantApp {
                 btn.classList.add('text-gray-500');
             }
         });
-        
-        const splitSection = document.getElementById('split-bill-section');
-        if (splitSection) {
-            if (mode === 'split') {
-                splitSection.classList.remove('hidden');
-                this.splitPeopleCount = this.splitPeopleCount || 2;
-                this.updateSplitDisplay();
-            } else {
-                splitSection.classList.add('hidden');
-                this.splitPeopleCount = 2;
-                const perPersonEl = document.getElementById('split-per-person');
-                if (perPersonEl) perPersonEl.textContent = '৳ 0';
-                const countInput = document.getElementById('split-people-count');
-                if (countInput) countInput.value = 2;
-            }
-        }
-    }
-
-    updateSplitCount(delta) {
-        this.splitPeopleCount = this.splitPeopleCount || 2;
-        this.splitPeopleCount = Math.max(2, Math.min(20, this.splitPeopleCount + delta));
-        this.updateSplitDisplay();
-    }
-
-    updateSplitDisplay() {
-        const countInput = document.getElementById('split-people-count');
-        const perPersonEl = document.getElementById('split-per-person');
-        
-        if (countInput) {
-            countInput.value = this.splitPeopleCount;
-        }
-        
-        if (perPersonEl) {
-            const subtotal = appState.getCartTotal();
-            const vat = Math.round(subtotal * 0.05);
-            const service = Math.round(subtotal * 0.05);
-            const total = subtotal + vat + service;
-            const perPerson = Math.floor(total / this.splitPeopleCount);
-            perPersonEl.textContent = `৳ ${perPerson.toLocaleString()}`;
-        }
     }
 
     setPaymentMethod(method) {
