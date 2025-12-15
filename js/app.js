@@ -212,6 +212,16 @@ class RestaurantApp {
                 this.handleBottomNav(target);
             });
         });
+
+        const thankyouCloseBtn = document.getElementById('thankyou-close-btn');
+        if (thankyouCloseBtn) {
+            thankyouCloseBtn.addEventListener('click', () => {
+                this.closeThankYouPopup();
+            });
+        }
+
+        this.splitCount = 2;
+        this.setupSplitBillControls();
     }
 
     handleBottomNav(target) {
@@ -388,28 +398,20 @@ class RestaurantApp {
 
     renderMenuCard(item, lang) {
         const name = item.name[lang] || item.name.en;
-        const desc = item.description[lang] || item.description.en;
         const tags = item.tags || [];
         
         return `
         <div class="@container">
-            <div class="flex flex-col items-stretch justify-start rounded-2xl bg-white dark:bg-card-dark shadow-md dark:shadow-none overflow-hidden transition-transform active:scale-[0.98] cursor-pointer" data-item-id="${item.id}">
-                <div class="relative w-full aspect-[21/9] bg-gray-200 dark:bg-gray-800 bg-center bg-cover" style='background-image: url("${item.image}");'>
-                    <div class="absolute top-3 left-3 flex gap-2">
-                        ${tags.map(tag => `<span class="px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-white text-[10px] font-bold uppercase tracking-wide border border-white/10">${tag}</span>`).join('')}
-                    </div>
+            <div class="flex flex-col items-stretch justify-start rounded-xl bg-white dark:bg-card-dark shadow-md dark:shadow-none overflow-hidden transition-transform active:scale-[0.98] cursor-pointer" data-item-id="${item.id}">
+                <div class="relative w-full aspect-square bg-gray-200 dark:bg-gray-800 bg-center bg-cover" style='background-image: url("${item.image}");'>
+                    ${tags.length > 0 ? `<div class="absolute top-1 left-1"><span class="px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-white text-[8px] font-bold uppercase">${tags[0]}</span></div>` : ''}
                 </div>
-                <div class="flex w-full flex-col p-4 gap-3">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="text-lg font-bold leading-tight mb-1 dark:text-white text-gray-900">${name}</h4>
-                            <p class="text-text-muted text-sm line-clamp-1">${desc}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between mt-1">
-                        <p class="text-lg font-bold dark:text-white text-gray-900">BDT ${item.price}</p>
-                        <button class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary text-background-dark shadow-lg shadow-primary/30 active:bg-primary/90" data-quick-add="${item.id}">
-                            <span class="material-symbols-outlined text-[24px]">add</span>
+                <div class="flex w-full flex-col p-2 gap-1">
+                    <h4 class="text-xs font-bold leading-tight dark:text-white text-gray-900 line-clamp-2">${name}</h4>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-bold text-primary">৳${item.price}</p>
+                        <button class="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary text-background-dark shadow-sm active:bg-primary/90" data-quick-add="${item.id}">
+                            <span class="material-symbols-outlined text-[14px]">add</span>
                         </button>
                     </div>
                 </div>
@@ -673,6 +675,7 @@ class RestaurantApp {
     }
 
     setBillSplitMode(mode) {
+        this.billSplitMode = mode;
         document.querySelectorAll('[data-bill-split]').forEach(btn => {
             if (btn.dataset.billSplit === mode) {
                 btn.classList.add('bg-white', 'dark:bg-white/10', 'shadow-sm');
@@ -682,6 +685,58 @@ class RestaurantApp {
                 btn.classList.add('text-gray-500');
             }
         });
+
+        const splitSection = document.getElementById('split-bill-section');
+        if (splitSection) {
+            if (mode === 'split') {
+                splitSection.classList.remove('hidden');
+                this.splitCount = this.splitCount || 2;
+                this.updateSplitBillUI();
+            } else {
+                splitSection.classList.add('hidden');
+            }
+        }
+    }
+
+    setupSplitBillControls() {
+        const minusBtn = document.getElementById('split-minus');
+        const plusBtn = document.getElementById('split-plus');
+
+        if (minusBtn) {
+            minusBtn.addEventListener('click', () => {
+                if (this.splitCount > 2) {
+                    this.splitCount--;
+                    this.updateSplitBillUI();
+                }
+            });
+        }
+
+        if (plusBtn) {
+            plusBtn.addEventListener('click', () => {
+                if (this.splitCount < 20) {
+                    this.splitCount++;
+                    this.updateSplitBillUI();
+                }
+            });
+        }
+    }
+
+    updateSplitBillUI() {
+        const countEl = document.getElementById('split-count');
+        const perPersonEl = document.getElementById('per-person-amount');
+
+        if (countEl) {
+            countEl.textContent = this.splitCount;
+        }
+
+        if (perPersonEl) {
+            const subtotal = appState.getCartTotal();
+            const vat = Math.round(subtotal * 0.05);
+            const service = Math.round(subtotal * 0.05);
+            const total = subtotal + vat + service;
+            const perPerson = Math.ceil(total / this.splitCount);
+            perPersonEl.textContent = `৳ ${perPerson.toLocaleString()}`;
+        }
     }
 
     setPaymentMethod(method) {
@@ -713,18 +768,30 @@ class RestaurantApp {
         const order = appState.createOrder(method);
         
         if (method === 'cash') {
-            appState.clearCart();
-            this.renderOrderStatus();
-            router.navigate('status');
-            this.startOrderStatusSimulation();
+            this.showThankYouPopup();
         } else {
             this.simulateDigitalPayment().then(() => {
-                appState.clearCart();
-                this.renderOrderStatus();
-                router.navigate('status');
-                this.startOrderStatusSimulation();
+                this.showThankYouPopup();
             });
         }
+    }
+
+    showThankYouPopup() {
+        const modal = document.getElementById('thankyou-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+
+    closeThankYouPopup() {
+        const modal = document.getElementById('thankyou-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        appState.clearCart();
+        this.renderOrderStatus();
+        router.navigate('status');
+        this.startOrderStatusSimulation();
     }
 
     simulateDigitalPayment() {
