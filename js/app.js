@@ -71,7 +71,7 @@ class RestaurantApp {
         
         const bottomNav = document.getElementById('bottom-nav');
         if (bottomNav) {
-            if (screenName === 'detail') {
+            if (screenName === 'detail' || screenName === 'cart') {
                 bottomNav.classList.add('hidden');
             } else {
                 bottomNav.classList.remove('hidden');
