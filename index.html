@@ -92,13 +92,11 @@
             </div>
         </header>
 
-        <section class="mt-4 px-0">
-            <div class="px-4 mb-3 flex justify-between items-end">
+        <section class="mt-4 px-4">
+            <div class="mb-3 flex justify-between items-end">
                 <h2 class="text-xl font-bold dark:text-white text-gray-900">Trending Now 🔥</h2>
             </div>
-            <div class="w-full overflow-x-auto no-scrollbar pl-4 pr-4 pb-4">
-                <div id="trending-items" class="flex gap-4 w-max"></div>
-            </div>
+            <div id="trending-items" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </section>
 
         <div class="w-full overflow-x-auto no-scrollbar pl-4 pr-4 py-3">
@@ -296,8 +294,8 @@
     </div>
 
     <!-- SCREEN: CART & CHECKOUT -->
-    <div id="screen-cart" class="hidden">
-        <div class="bg-background-light dark:bg-background-dark font-display antialiased min-h-screen relative flex flex-col">
+    <div id="screen-cart" class="hidden min-h-screen">
+        <div class="bg-background-light dark:bg-background-dark font-display antialiased min-h-screen relative flex flex-col overflow-y-auto">
             <header class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-black/5 dark:border-white/5 px-4 pt-4 pb-2">
                 <div class="flex items-center justify-between mb-2">
                     <button class="flex items-center justify-center w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition-colors" data-nav-back>
@@ -323,6 +321,30 @@
                         <div class="flex bg-black/5 dark:bg-black/40 p-1 rounded-xl">
                             <button class="flex-1 py-2 px-4 rounded-lg bg-white dark:bg-white/10 text-black dark:text-white font-bold text-sm shadow-sm transition-all" data-bill-split="me">Me only</button>
                             <button class="flex-1 py-2 px-4 rounded-lg text-gray-500 dark:text-gray-400 font-medium text-sm hover:text-black dark:hover:text-white transition-all" data-bill-split="split">Split Bill</button>
+                        </div>
+                    </div>
+                    <div id="split-bill-section" class="hidden">
+                        <label class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-2 block">Number of People</label>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="flex items-center gap-3 bg-black/5 dark:bg-black/20 rounded-full px-3 py-2 flex-1">
+                                <button class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-white/10 text-black dark:text-white shadow-sm shrink-0" id="split-minus">
+                                    <span class="material-symbols-outlined text-[18px]">remove</span>
+                                </button>
+                                <input type="number" id="split-people-count" value="2" min="2" max="20" class="bg-transparent text-center text-xl font-bold text-black dark:text-white w-12 focus:outline-none" readonly>
+                                <button class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-black shadow-sm shrink-0" id="split-plus">
+                                    <span class="material-symbols-outlined text-[18px]">add</span>
+                                </button>
+                            </div>
+                            <span class="text-gray-500 dark:text-gray-400 text-sm">people</span>
+                        </div>
+                        <div class="bg-primary/10 rounded-xl p-4 border border-primary/20">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-[20px]">person</span>
+                                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">Each person pays</span>
+                                </div>
+                                <span id="split-per-person" class="text-xl font-bold text-primary">৳ 0</span>
+                            </div>
                         </div>
                     </div>
                     <div class="w-full h-px bg-black/5 dark:bg-white/5"></div>
@@ -391,8 +413,8 @@
     </div>
 
     <!-- SCREEN: ORDER STATUS -->
-    <div id="screen-status" class="hidden">
-        <div class="relative flex h-auto min-h-screen w-full max-w-md mx-auto flex-col overflow-hidden pb-24 bg-background-light dark:bg-background-dark">
+    <div id="screen-status" class="hidden min-h-screen overflow-y-auto">
+        <div class="relative flex h-auto min-h-screen w-full max-w-md mx-auto flex-col pb-24 bg-background-light dark:bg-background-dark">
             <div class="flex items-center p-6 pb-2 justify-between z-10">
                 <h2 class="text-xl font-extrabold leading-tight tracking-tight flex-1" data-table-number>Table #12</h2>
                 <div class="flex items-center justify-end gap-2">
@@ -442,11 +464,11 @@
     </div>
 
     <!-- SCREEN: MINI GAME -->
-    <div id="screen-game" class="hidden">
+    <div id="screen-game" class="hidden min-h-screen overflow-y-auto">
         <div class="relative min-h-screen w-full flex flex-col items-center justify-end md:justify-center bg-black">
             <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
 
-            <div class="relative w-full max-w-md bg-background-dark rounded-t-2xl md:rounded-2xl shadow-2xl overflow-hidden border-t border-white/10 flex flex-col max-h-[90vh]">
+            <div class="relative w-full max-w-md bg-background-dark rounded-t-2xl md:rounded-2xl shadow-2xl overflow-y-auto border-t border-white/10 flex flex-col">
                 <div class="flex items-center justify-center pt-3 pb-1">
                     <div class="h-1.5 w-12 rounded-full bg-white/20"></div>
                 </div>
@@ -527,8 +549,8 @@
     </div>
 
     <!-- SCREEN: FEEDBACK -->
-    <div id="screen-feedback" class="hidden">
-        <div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden pb-24">
+    <div id="screen-feedback" class="hidden min-h-screen overflow-y-auto">
+        <div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl pb-24">
             <div class="flex items-center px-6 pt-6 pb-2 justify-between z-10">
                 <button class="text-gray-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full active:bg-black/5 dark:active:bg-white/10 transition-colors" data-nav-back>
                     <span class="material-symbols-outlined text-3xl">close</span>
