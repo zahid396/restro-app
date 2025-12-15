@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Order Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53d22d",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152012",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-black">
+<div class="relative flex h-auto min-h-screen w-full max-w-md mx-auto flex-col overflow-hidden pb-24">
+<!-- TopAppBar -->
+<div class="flex items-center p-6 pb-2 justify-between z-10">
+<h2 class="text-xl font-extrabold leading-tight tracking-tight flex-1">Table #12</h2>
+<div class="flex items-center justify-end gap-2">
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">help</span>
+</button>
+</div>
+</div>
+<!-- Hero Section -->
+<div class="flex flex-col items-center pt-8 px-6 text-center">
+<div class="relative mb-6">
+<!-- Glowing background effect -->
+<div class="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
+<span class="material-symbols-outlined relative z-10 text-primary animate-pulse" style="font-size: 64px; font-variation-settings: 'FILL' 1;">skillet</span>
+</div>
+<h1 class="text-[28px] font-extrabold leading-tight mb-2 tracking-tight">Fire in the kitchen!</h1>
+<p class="text-gray-500 dark:text-gray-400 text-base font-medium">We are preparing your order.</p>
+</div>
+<!-- Stats / ETA Card -->
+<div class="p-6">
+<div class="flex flex-col items-center justify-center gap-1 rounded-2xl p-6 bg-white dark:bg-[#1E291B] shadow-sm border border-gray-100 dark:border-white/5">
+<p class="text-gray-500 dark:text-gray-400 text-sm font-bold uppercase tracking-wider">Estimated Wait</p>
+<p class="text-primary tracking-tighter text-5xl font-extrabold">~12<span class="text-2xl ml-1 text-gray-400 dark:text-gray-500 font-bold">mins</span></p>
+</div>
+</div>
+<!-- Timeline -->
+<div class="grid grid-cols-[48px_1fr] gap-x-0 px-6 mt-2">
+<!-- Step 1: Completed -->
+<div class="flex flex-col items-center h-full">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-black z-10">
+<span class="material-symbols-outlined" style="font-size: 20px;">check</span>
+</div>
+<div class="w-[2px] bg-primary h-full min-h-[40px]"></div>
+</div>
+<div class="flex flex-col pb-8 pt-1 pl-4 opacity-50">
+<p class="text-base font-bold leading-none">Order Received</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">12:42 PM</p>
+</div>
+<!-- Step 2: Active -->
+<div class="flex flex-col items-center h-full">
+<div class="relative flex items-center justify-center w-8 h-8 z-10">
+<div class="absolute inset-0 bg-primary rounded-full animate-ping opacity-75"></div>
+<div class="relative w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black">
+<span class="material-symbols-outlined" style="font-size: 20px; font-variation-settings: 'FILL' 1;">skillet</span>
+</div>
+</div>
+<div class="w-[2px] bg-gray-200 dark:bg-white/10 h-full min-h-[40px]"></div>
+</div>
+<div class="flex flex-col pb-8 pt-1 pl-4">
+<p class="text-lg font-bold leading-none text-primary">Cooking</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Chef Mike is on it!</p>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex flex-col items-center h-full">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-gray-500 z-10">
+<span class="material-symbols-outlined" style="font-size: 20px;">room_service</span>
+</div>
+<div class="w-[2px] bg-gray-200 dark:bg-white/10 h-full min-h-[40px]"></div>
+</div>
+<div class="flex flex-col pb-8 pt-1 pl-4 opacity-40">
+<p class="text-base font-bold leading-none">Plating</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Almost ready</p>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex flex-col items-center h-full">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-gray-500 z-10">
+<span class="material-symbols-outlined" style="font-size: 20px;">dinner_dining</span>
+</div>
+</div>
+<div class="flex flex-col pt-1 pl-4 opacity-40">
+<p class="text-base font-bold leading-none">Served</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enjoy your meal</p>
+</div>
+</div>
+<!-- Order Summary Accordion -->
+<div class="px-6 mt-8 mb-4">
+<div class="rounded-2xl bg-white dark:bg-[#1E291B] overflow-hidden border border-gray-100 dark:border-white/5">
+<div class="p-4 flex items-center justify-between cursor-pointer group">
+<h3 class="font-bold text-lg">Your Order (3)</h3>
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">expand_more</span>
+</div>
+<div class="px-4 pb-4 flex flex-col gap-3">
+<div class="flex gap-4 items-center">
+<div class="w-16 h-16 rounded-xl bg-cover bg-center shrink-0" data-alt="Juicy beef burger with cheese and lettuce on a wooden board" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCT9X0EUpQtN15_4sPftNIZDXVa9ZXV2AWgGUUo9AbOJePTsZq7b_gVFCHmvtmpXbBc8D4tXWAGyZyF54Jr-R8tG2E6QgIM4X13nszEQiow2ZLFatZMR_UEIQor9SwCEnH2upQP4HcuTdE8V08UygJTQvDsFCfUtbdEjHfh9W0JQdAYYb45CtBMx5JW6FNHcKiZWYlnLBFfPc1HgF1o-Lob5xuRXabyx2MyVKA5lTqJJEv-nK2ZGaSfW4X5T3iQZZrRiNCeEQpmnvA');"></div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="font-bold text-sm">Classic Smash Burger</p>
+<p class="text-sm font-bold opacity-70">x2</p>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">No onions, Extra cheese</p>
+</div>
+</div>
+<div class="w-full h-[1px] bg-gray-100 dark:bg-white/5"></div>
+<div class="flex gap-4 items-center">
+<div class="w-16 h-16 rounded-xl bg-cover bg-center shrink-0" data-alt="Golden crispy french fries in a basket" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEfIDIn73dEBBDWXZyU8CbD5SjEFnV4_jPDJhkeJPDtdGDOJXp8lY3mYRy5SpYl8eMzCsh0BkUhtM1s5GSUAqBa-m9ewHLxBkEMfwk-FwjBzZ2mmHb4VMhAQct0VWTFppfzzQVezGj-MHZ-486zVYtSALcWs5MqA_Q0JpFr2EOc31WTpqJ2RoJsm3qYCqmq9LhthYU_3jUqyoeGCXYIfBHCokgJLUq4IgFf-dtsc4QyjzvwLGl_-RKD3n0qecxWkXQ46sxHiBn-NA');"></div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="font-bold text-sm">Truffle Fries</p>
+<p class="text-sm font-bold opacity-70">x1</p>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Large size</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer -->
+<div class="fixed bottom-0 left-0 right-0 z-50 p-6 pt-2 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent">
+<div class="flex flex-col gap-3 max-w-md mx-auto">
+<button class="w-full bg-primary hover:bg-green-500 text-black font-extrabold text-lg py-4 rounded-full shadow-[0_0_20px_rgba(83,210,45,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                    Forgot something? Add to Order
+                </button>
+<button class="w-full text-gray-500 dark:text-gray-400 font-bold text-sm py-2 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    View Receipt
+                </button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mini Game &amp; Fortune Card</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#53d22d",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152012",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem", 
+                        "lg": "1.5rem", 
+                        "xl": "2rem", 
+                        "2xl": "2.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom utilities for glassmorphism and subtle glows */
+        .glass-panel {
+            background: rgba(31, 37, 29, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .card-glow {
+            box-shadow: 0 0 20px -5px rgba(83, 210, 45, 0.15);
+        }
+
+        .primary-glow {
+            box-shadow: 0 0 15px rgba(83, 210, 45, 0.4);
+        }
+
+        /* Pattern for face-down cards */
+        .pattern-grid {
+            background-image: radial-gradient(rgba(83, 210, 45, 0.2) 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black font-display antialiased text-white overflow-x-hidden selection:bg-primary selection:text-black">
+<!-- Screen Container -->
+<div class="relative min-h-screen w-full flex flex-col items-center justify-end md:justify-center bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16549766b?q=80&amp;w=1000&amp;auto=format&amp;fit=crop')] bg-cover bg-center">
+<!-- Dark Overlay -->
+<div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+<!-- Main Modal / Bottom Sheet -->
+<div class="relative w-full max-w-md bg-background-dark rounded-t-2xl md:rounded-2xl shadow-2xl overflow-hidden border-t border-white/10 flex flex-col max-h-[90vh]">
+<!-- Handle -->
+<div class="flex items-center justify-center pt-3 pb-1">
+<div class="h-1.5 w-12 rounded-full bg-white/20"></div>
+</div>
+<!-- Header Section -->
+<div class="px-6 pt-4 pb-2 text-center relative z-10">
+<div class="absolute right-4 top-2">
+<button class="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+</div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
+<span class="material-symbols-outlined text-primary text-sm">auto_awesome</span>
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Daily Reward</span>
+</div>
+<h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Feeling Lucky?</h1>
+<p class="text-white/60 text-base font-medium leading-relaxed max-w-[280px] mx-auto">
+                    Pick a card to reveal a special gift for your table.
+                </p>
+</div>
+<!-- Game Area: 3 Cards -->
+<div class="px-6 py-6">
+<div class="grid grid-cols-3 gap-3">
+<!-- Card 1 -->
+<button class="group relative aspect-[3/4] rounded-xl bg-[#1f251d] border border-white/5 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1 active:scale-95">
+<div class="absolute inset-0 rounded-xl pattern-grid opacity-30"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">help</span>
+</div>
+</div>
+</button>
+<!-- Card 2 -->
+<button class="group relative aspect-[3/4] rounded-xl bg-[#1f251d] border border-white/5 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1 active:scale-95">
+<div class="absolute inset-0 rounded-xl pattern-grid opacity-30"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">help</span>
+</div>
+</div>
+</button>
+<!-- Card 3 -->
+<button class="group relative aspect-[3/4] rounded-xl bg-[#1f251d] border border-white/5 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1 active:scale-95">
+<div class="absolute inset-0 rounded-xl pattern-grid opacity-30"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">help</span>
+</div>
+</div>
+</button>
+</div>
+</div>
+<!-- Divider / Reveal State Indicator -->
+<div class="relative h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-2"></div>
+<!-- Revealed Reward Card (Simulating the state after tap) -->
+<div class="p-4 @container pb-8">
+<div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start shadow-xl bg-[#1f251d] border border-primary/30 relative overflow-hidden card-glow">
+<!-- Shine Effect -->
+<div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
+<!-- Image -->
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-t-xl @xl:rounded-l-xl @xl:rounded-tr-none relative group cursor-pointer overflow-hidden" data-alt="Close up of a delicious artisanal tiramisu dessert with cocoa powder dusting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6q0ydBD_-J_dqDnmzYdP_M7jqUmJmle7lOYx0HJR6Jynzf4a4qaQdPiARzow4B0yblQ4LBMzmo6Wn1hPfp0MtR9KAHP-E25agjOigabEz_bBG_Tx-W4kAFAqt1gaSoltnnQ7gyMFnN7ejJf79d9lgGcREATPXu9jKNsHIDz4KaAaD7SAJxfodZMgdoRl1rS2TlEzkbPWJ1Qe8sp-AwrrgwmMt0oBr3Sbe33W3QL_jfzGSF6PmBXf2bAtEY9lrUR_TMJ0Zp55l5vA");'>
+<!-- Tag on image -->
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded-md border border-white/10">
+                            YOU WON!
+                         </div>
+</div>
+<!-- Content -->
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 p-4">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="text-white text-xl font-bold leading-tight tracking-tight mb-1">Free Tiramisu</h3>
+<p class="text-[#a5b6a0] text-sm font-medium leading-normal">Delicious house-made classic.</p>
+</div>
+<span class="material-symbols-outlined text-primary animate-bounce">redeem</span>
+</div>
+<div class="my-3 border-t border-white/5 border-dashed"></div>
+<div class="flex flex-col gap-3">
+<p class="text-white/40 text-xs text-center">Valid for this order only. Expires in 15:00</p>
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary hover:bg-[#45b525] active:scale-95 transition-all text-[#131712] text-base font-bold shadow-[0_0_15px_rgba(83,210,45,0.4)]">
+<span class="mr-2">Claim Reward</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Secondary Action -->
+<button class="w-full text-center mt-4 text-white/40 text-sm font-medium hover:text-white transition-colors pb-safe">
+                    No thanks, I'll pass
+                </button>
+</div>
+<!-- Bottom safe area spacer -->
+<div class="h-2 bg-background-dark"></div>
+</div>
+</div>
+</body></html>
