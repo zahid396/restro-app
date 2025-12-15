@@ -1,6 +1,6 @@
 import appState from './state.js';
 import router from './router.js';
-import { MenuData, RewardsData, OrderStatusConfig } from './data.js';
+import { MenuData, RewardsData, OrderStatusConfig, RestaurantConfig, ReviewsData } from './data.js';
 
 class RestaurantApp {
     constructor() {
@@ -18,11 +18,14 @@ class RestaurantApp {
             this.updateCartBadge();
             this.updateTableNumber();
             this.updateLanguageToggle();
+            this.updateRestaurantName();
+            this.updateBottomNav('menu');
         });
 
         appState.subscribe(() => {
             this.updateCartBadge();
             this.updateTableNumber();
+            this.updateRestaurantName();
         });
     }
 
@@ -40,7 +43,21 @@ class RestaurantApp {
     setupRouter() {
         router.subscribe((screen) => {
             this.showScreen(screen);
+            this.syncBottomNavWithScreen(screen);
         });
+    }
+
+    syncBottomNavWithScreen(screen) {
+        const screenToNav = {
+            'menu': 'menu',
+            'detail': 'menu',
+            'cart': 'checkout',
+            'status': 'orders',
+            'feedback': 'orders',
+            'game': 'menu'
+        };
+        const navTarget = screenToNav[screen] || 'menu';
+        this.updateBottomNav(navTarget);
     }
 
     showScreen(screenName) {
@@ -182,6 +199,74 @@ class RestaurantApp {
                 router.navigate('menu');
             });
         }
+
+        document.querySelectorAll('[data-nav-game]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.showGameModal();
+            });
+        });
+
+        document.querySelectorAll('[data-bottom-nav]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget.dataset.bottomNav;
+                this.handleBottomNav(target);
+            });
+        });
+    }
+
+    handleBottomNav(target) {
+        this.updateBottomNav(target);
+        switch(target) {
+            case 'menu':
+                router.navigate('menu');
+                break;
+            case 'orders':
+                if (appState.get('cart').length > 0 || appState.get('orderHistory')?.length > 0) {
+                    router.navigate('status');
+                    this.renderOrderStatus();
+                } else {
+                    this.showToast('No active orders yet');
+                }
+                break;
+            case 'checkout':
+                this.renderCart();
+                router.navigate('cart');
+                break;
+        }
+    }
+
+    updateBottomNav(active) {
+        document.querySelectorAll('[data-bottom-nav]').forEach(btn => {
+            const target = btn.dataset.bottomNav;
+            const icon = btn.querySelector('.material-symbols-outlined');
+            const label = btn.querySelector('span:last-child');
+            
+            if (target === active) {
+                btn.classList.remove('text-gray-400');
+                btn.classList.add('text-primary');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+                if (label) {
+                    label.classList.remove('font-medium');
+                    label.classList.add('font-bold');
+                }
+            } else {
+                btn.classList.add('text-gray-400');
+                btn.classList.remove('text-primary');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+                if (label) {
+                    label.classList.add('font-medium');
+                    label.classList.remove('font-bold');
+                }
+            }
+        });
+    }
+
+    updateRestaurantName() {
+        const lang = appState.get('language');
+        const name = RestaurantConfig.name[lang] || RestaurantConfig.name.en;
+        document.querySelectorAll('[data-restaurant-name]').forEach(el => {
+            el.textContent = name;
+        });
     }
 
     renderActiveScreen() {
@@ -391,8 +476,53 @@ class RestaurantApp {
             document.getElementById('allergen-section').classList.add('hidden');
         }
 
+        this.renderReviews(itemId, item.comments);
+
         this.detailQuantity = 1;
         this.updateDetailTotal(item);
+    }
+
+    renderReviews(itemId, totalComments) {
+        const reviewsContainer = document.getElementById('reviews-container');
+        const reviewsCount = document.getElementById('reviews-count');
+        
+        if (!reviewsContainer) return;
+
+        const itemReviews = ReviewsData.reviews.filter(r => r.itemId === itemId);
+        
+        reviewsCount.textContent = `${totalComments} reviews`;
+
+        if (itemReviews.length === 0) {
+            reviewsContainer.innerHTML = `
+                <div class="text-center py-6 text-gray-400">
+                    <span class="material-symbols-outlined text-3xl mb-2">rate_review</span>
+                    <p class="text-sm">No reviews yet. Be the first to review!</p>
+                </div>
+            `;
+            return;
+        }
+
+        reviewsContainer.innerHTML = itemReviews.map(review => `
+            <div class="bg-slate-100 dark:bg-white/5 rounded-xl p-4 border border-slate-200 dark:border-white/5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xl shrink-0">
+                        ${review.avatar}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 mb-1">
+                            <span class="font-bold text-sm text-slate-900 dark:text-white">${review.user}</span>
+                            <span class="text-xs text-gray-400">${review.date}</span>
+                        </div>
+                        <div class="flex items-center gap-0.5 mb-2">
+                            ${Array.from({length: 5}, (_, i) => `
+                                <span class="material-symbols-outlined text-[14px] ${i < review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}" style="font-variation-settings: 'FILL' 1;">star</span>
+                            `).join('')}
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-gray-300 leading-relaxed">${review.comment}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
 
     updateDetailTotal(item) {

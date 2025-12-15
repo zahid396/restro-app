@@ -1,3 +1,23 @@
+const RestaurantConfig = {
+    name: { en: 'The Green Kitchen', bn: 'দ্য গ্রিন কিচেন' },
+    tagline: { en: 'Fresh & Flavorful', bn: 'তাজা ও সুস্বাদু' }
+};
+
+const ReviewsData = {
+    reviews: [
+        { id: 1, itemId: 1, user: 'Sarah M.', avatar: '👩', rating: 5, comment: 'Best truffle fries I\'ve ever had! The parmesan is so generous.', date: '2 days ago' },
+        { id: 2, itemId: 1, user: 'Ahmed K.', avatar: '👨', rating: 4, comment: 'Really crispy and flavorful. Will order again!', date: '1 week ago' },
+        { id: 3, itemId: 3, user: 'Fatima R.', avatar: '👩', rating: 5, comment: 'The naga chili hits different! Perfectly spicy 🌶️', date: '3 days ago' },
+        { id: 4, itemId: 3, user: 'John D.', avatar: '👨', rating: 5, comment: 'Incredible burger. The caramelized onions are amazing.', date: '5 days ago' },
+        { id: 5, itemId: 3, user: 'Priya S.', avatar: '👩', rating: 4, comment: 'Loved the spice level! Not for the faint-hearted.', date: '1 week ago' },
+        { id: 6, itemId: 5, user: 'Michael B.', avatar: '👨', rating: 5, comment: 'Perfectly cooked steak. Medium rare was on point!', date: '2 days ago' },
+        { id: 7, itemId: 6, user: 'Lisa W.', avatar: '👩', rating: 5, comment: 'Creamy, delicious pasta. Comfort food at its best.', date: '4 days ago' },
+        { id: 8, itemId: 7, user: 'Rafiq H.', avatar: '👨', rating: 5, comment: 'The truffle aroma is heavenly. Worth every penny!', date: '1 week ago' },
+        { id: 9, itemId: 10, user: 'Emma T.', avatar: '👩', rating: 5, comment: 'Best tiramisu in town! So authentic.', date: '3 days ago' },
+        { id: 10, itemId: 12, user: 'David L.', avatar: '👨', rating: 5, comment: 'Truffle mayo takes this burger to another level!', date: '6 days ago' }
+    ]
+};
+
 const MenuData = {
     categories: [
         { id: 'starters', name: { en: 'Starters', bn: 'স্টার্টার্স' }, icon: 'restaurant' },
@@ -234,4 +254,4 @@ const OrderStatusConfig = {
     etaMinutes: 12
 };
 
-export { MenuData, RewardsData, OrderStatusConfig };
+export { MenuData, RewardsData, OrderStatusConfig, RestaurantConfig, ReviewsData };

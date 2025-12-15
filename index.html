@@ -68,14 +68,27 @@
 
     <!-- SCREEN: MENU HOME -->
     <div id="screen-menu" class="pb-28">
-        <header class="pt-4 px-4 pb-2 flex items-center justify-between sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm transition-all duration-300">
-            <div class="flex items-center gap-2 bg-card-dark/10 dark:bg-white/10 px-4 py-2 rounded-full border border-black/5 dark:border-white/5">
-                <span class="material-symbols-outlined text-primary text-[20px]">table_restaurant</span>
-                <span class="text-sm font-bold tracking-tight" data-table-number>Table 12</span>
+        <header class="pt-4 px-4 pb-2 flex flex-col gap-3 sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm transition-all duration-300">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-primary text-xl font-extrabold tracking-tight" data-restaurant-name>The Green Kitchen</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="flex items-center gap-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg hover:shadow-xl active:scale-95 transition-all" data-nav-game>
+                        <span class="material-symbols-outlined text-[16px]">sports_esports</span>
+                        <span>Play</span>
+                    </button>
+                </div>
             </div>
-            <div class="flex bg-card-dark/10 dark:bg-white/10 rounded-full p-1 relative">
-                <button class="px-3 py-1 rounded-full bg-white dark:bg-card-dark shadow-sm text-xs font-bold transition-all" data-lang-toggle data-lang="en">EN</button>
-                <button class="px-3 py-1 rounded-full text-text-muted text-xs font-bold transition-all hover:text-black dark:hover:text-white" data-lang-toggle data-lang="bn">BN</button>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 bg-card-dark/10 dark:bg-white/10 px-4 py-2 rounded-full border border-black/5 dark:border-white/5">
+                    <span class="material-symbols-outlined text-primary text-[20px]">table_restaurant</span>
+                    <span class="text-sm font-bold tracking-tight" data-table-number>Table 12</span>
+                </div>
+                <div class="flex bg-card-dark/10 dark:bg-white/10 rounded-full p-1 relative">
+                    <button class="px-3 py-1 rounded-full bg-white dark:bg-card-dark shadow-sm text-xs font-bold transition-all" data-lang-toggle data-lang="en">EN</button>
+                    <button class="px-3 py-1 rounded-full text-text-muted text-xs font-bold transition-all hover:text-black dark:hover:text-white" data-lang-toggle data-lang="bn">BN</button>
+                </div>
             </div>
         </header>
 
@@ -159,7 +172,7 @@
             </section>
         </main>
 
-        <div class="fixed bottom-6 inset-x-4 z-50" style="display: none;" id="view-order-btn">
+        <div class="fixed bottom-20 inset-x-4 z-50" style="display: none;" id="view-order-btn">
             <button class="w-full bg-primary text-background-dark h-14 rounded-full shadow-[0_8px_30px_rgb(83,210,45,0.4)] flex items-center justify-between px-6 transition-transform hover:scale-[1.02] active:scale-95" data-nav-cart>
                 <div class="flex items-center gap-2">
                     <div class="bg-black/10 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold" data-cart-count>0</div>
@@ -173,6 +186,24 @@
             </button>
         </div>
     </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-[55] bg-white/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-gray-200 dark:border-white/10 shadow-lg">
+        <div class="flex items-center justify-around h-16 max-w-md mx-auto px-4">
+            <button class="flex flex-col items-center justify-center gap-1 flex-1 py-2 text-primary transition-colors" data-bottom-nav="menu">
+                <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+                <span class="text-xs font-bold">Menu</span>
+            </button>
+            <button class="flex flex-col items-center justify-center gap-1 flex-1 py-2 text-gray-400 hover:text-primary transition-colors" data-bottom-nav="orders">
+                <span class="material-symbols-outlined text-[24px]">receipt_long</span>
+                <span class="text-xs font-medium">Orders</span>
+            </button>
+            <button class="flex flex-col items-center justify-center gap-1 flex-1 py-2 text-gray-400 hover:text-primary transition-colors" data-bottom-nav="checkout">
+                <span class="material-symbols-outlined text-[24px]">payments</span>
+                <span class="text-xs font-medium">Bills</span>
+            </button>
+        </div>
+    </nav>
 
     <!-- SCREEN: DISH DETAIL -->
     <div id="screen-detail" class="hidden">
@@ -234,6 +265,14 @@
                         <p id="detail-allergens" class="text-xs text-slate-600 dark:text-gray-400 leading-normal"></p>
                     </div>
                 </div>
+
+                <div id="reviews-section" class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Reviews & Comments</h3>
+                        <span id="reviews-count" class="text-sm text-primary font-bold">0 reviews</span>
+                    </div>
+                    <div id="reviews-container" class="space-y-3"></div>
+                </div>
             </div>
 
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent pt-12 pb-6 z-40 max-w-md mx-auto">
@@ -264,7 +303,7 @@
                     <button class="flex items-center justify-center w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition-colors" data-nav-back>
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
-                    <h1 class="text-lg font-bold text-black dark:text-white">Your Order</h1>
+                    <h1 class="text-lg font-bold text-black dark:text-white"><span data-restaurant-name>The Green Kitchen</span> - Order</h1>
                     <div class="w-10"></div>
                 </div>
                 <div class="flex justify-center pb-2">
@@ -562,6 +601,9 @@
     <!-- COMBO SUGGESTION MODAL -->
     <div id="combo-modal" class="hidden fixed inset-0 z-[60] flex items-end justify-center bg-black/50">
         <div class="w-full max-w-md bg-background-dark rounded-t-2xl p-6 shadow-2xl">
+            <div class="text-center mb-2">
+                <span class="text-primary text-sm font-bold" data-restaurant-name>The Green Kitchen</span>
+            </div>
             <div class="flex justify-between items-center mb-4">
                 <h3 id="combo-message" class="text-lg font-bold text-white">Complete your meal!</h3>
                 <button id="combo-close" class="text-gray-400 hover:text-white">
