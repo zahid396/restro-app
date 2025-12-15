@@ -25,6 +25,10 @@ An interactive restaurant ordering prototype built with vanilla HTML/CSS/JS. Con
 - Live order status with animated timeline
 - Mini-game rewards system
 - Feedback/rating screen
+- **Bottom navigation** with Menu, Orders, and Bills tabs
+- **Play Games button** in header for quick access to rewards game
+- **Restaurant name branding** displayed across all screens/modals (configurable in RestaurantConfig)
+- **Reviews section** on dish detail page showing user comments and ratings
 
 ## Running the App
 ```bash
