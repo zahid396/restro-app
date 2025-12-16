@@ -1,25 +1,35 @@
 import appState from './state.js';
 import router from './router.js';
-import { MenuData, RewardsData, OrderStatusConfig, RestaurantConfig, ReviewsData } from './data.js';
+import { MenuData, RewardsData, OrderStatusConfig, RestaurantConfig, ReviewsData, loadAllData } from './data.js';
+import api from './api.js';
 
 class RestaurantApp {
     constructor() {
         this.screens = {};
         this.orderStatusTimer = null;
+        this.dataLoaded = false;
         this.init();
     }
 
     init() {
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             this.cacheScreens();
             this.bindGlobalEvents();
             this.setupRouter();
-            this.renderMenu();
             this.updateCartBadge();
             this.updateTableNumber();
             this.updateLanguageToggle();
-            this.updateRestaurantName();
             this.updateBottomNav('menu');
+            
+            try {
+                await loadAllData();
+                this.dataLoaded = true;
+                this.renderMenu();
+                this.updateRestaurantName();
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                this.showToast('Failed to load menu data');
+            }
         });
 
         appState.subscribe(() => {
@@ -773,16 +783,37 @@ class RestaurantApp {
         });
     }
 
-    handlePayment() {
+    async handlePayment() {
         const method = this.selectedPaymentMethod || 'cash';
-        const order = appState.createOrder(method);
+        const cart = appState.get('cart');
+        const tableId = appState.get('tableId');
         
-        if (method === 'cash') {
-            this.showThankYouPopup();
-        } else {
-            this.simulateDigitalPayment().then(() => {
-                this.showThankYouPopup();
+        if (cart.length === 0) {
+            this.showToast('No items in cart');
+            return;
+        }
+        
+        try {
+            const orderResponse = await api.createOrder(tableId, cart, method);
+            
+            appState.set('order', {
+                id: orderResponse.order_id,
+                status: orderResponse.status,
+                items: cart,
+                total: orderResponse.total,
+                paymentMethod: method,
+                createdAt: orderResponse.created_at
             });
+            
+            if (method === 'cash') {
+                this.showThankYouPopup();
+            } else {
+                await this.simulateDigitalPayment();
+                this.showThankYouPopup();
+            }
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            this.showToast('Failed to place order');
         }
     }
 
@@ -918,22 +949,9 @@ class RestaurantApp {
         this.gameRevealed = false;
     }
 
-    revealReward(cardElement) {
+    async revealReward(cardElement) {
         if (this.gameRevealed) return;
         this.gameRevealed = true;
-
-        const rewards = RewardsData.rewards;
-        const random = Math.random();
-        let cumulative = 0;
-        let selectedReward = rewards[0];
-        
-        for (const reward of rewards) {
-            cumulative += reward.probability;
-            if (random <= cumulative) {
-                selectedReward = reward;
-                break;
-            }
-        }
 
         const lang = appState.get('language');
 
@@ -943,17 +961,24 @@ class RestaurantApp {
         cardElement.classList.remove('opacity-50');
         cardElement.classList.add('ring-2', 'ring-primary');
 
-        const rewardSection = document.getElementById('reward-reveal');
-        rewardSection.classList.remove('hidden');
-        
-        document.getElementById('reward-name').textContent = selectedReward.name[lang];
-        document.getElementById('reward-description').textContent = selectedReward.description[lang];
-        
-        if (selectedReward.image) {
-            document.getElementById('reward-image').style.backgroundImage = `url('${selectedReward.image}')`;
+        try {
+            const reward = await api.getReward();
+            
+            const rewardSection = document.getElementById('reward-reveal');
+            rewardSection.classList.remove('hidden');
+            
+            document.getElementById('reward-name').textContent = reward.name[lang] || reward.name.en;
+            document.getElementById('reward-description').textContent = reward.description[lang] || reward.description.en;
+            
+            if (reward.image) {
+                document.getElementById('reward-image').style.backgroundImage = `url('${reward.image}')`;
+            }
+            
+            document.getElementById('reward-timer').textContent = `Valid for this order only. Expires in ${reward.expires_in || 15}:00`;
+        } catch (error) {
+            console.error('Failed to get reward:', error);
+            this.showToast('Failed to get reward');
         }
-        
-        document.getElementById('reward-timer').textContent = `Valid for this order only. Expires in ${selectedReward.expiresIn}:00`;
     }
 
     renderFeedback() {
@@ -1014,14 +1039,24 @@ class RestaurantApp {
         appState.set('feedback', feedback);
     }
 
-    submitFeedback() {
+    async submitFeedback() {
         const feedback = appState.get('feedback');
         feedback.comment = document.getElementById('feedback-comment')?.value || '';
+        const order = appState.get('order');
         
-        localStorage.setItem('lastFeedback', JSON.stringify(feedback));
-        
-        this.showToast('Thank you for your feedback!');
-        router.navigate('menu');
+        try {
+            if (order?.id) {
+                await api.submitReview(order.id, null, feedback.rating, feedback.comment);
+            }
+            localStorage.setItem('lastFeedback', JSON.stringify(feedback));
+            this.showToast('Thank you for your feedback!');
+            router.navigate('menu');
+        } catch (error) {
+            console.error('Failed to submit feedback:', error);
+            localStorage.setItem('lastFeedback', JSON.stringify(feedback));
+            this.showToast('Thank you for your feedback!');
+            router.navigate('menu');
+        }
     }
 
     handleReorder() {

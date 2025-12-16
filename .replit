@@ -1,4 +1,4 @@
-modules = ["python-3.11", "php-8.3", "postgresql-16"]
+modules = ["python-3.11", "php-8.3", "php-8.4", "postgresql-16"]
 [nix]
 channel = "stable-25_05"
 packages = ["unzip"]
@@ -27,7 +27,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python server.py"
+args = "php -S 0.0.0.0:5000 router.php"
 waitForPort = 5000
 
 [[ports]]
