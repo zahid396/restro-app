@@ -31,9 +31,19 @@ An interactive restaurant ordering prototype built with vanilla HTML/CSS/JS. Con
 - **Play Games button** in header for quick access to rewards game
 - **Restaurant name branding** displayed across all screens/modals (configurable in RestaurantConfig)
 - **Reviews section** on dish detail page showing user comments and ratings
-- **Compact 3-column grid** for menu items for better visibility
+- **Responsive grid layout** for menu items (adapts from 2-5 columns based on screen size)
 
-## Recent Changes (Dec 15, 2025)
+## Recent Changes (Dec 16, 2025)
+- **Full responsive design overhaul**:
+  - Menu grids now adapt: 2 columns on mobile, 3 on tablets, 4-5 on larger screens
+  - Trending cards scale responsively (200px-280px) based on screen width
+  - Favorite button repositioned inside image area for consistent alignment
+  - Detail, cart, status, game, and feedback screens widened to max-w-2xl for better tablet/desktop experience
+  - View order button uses responsive positioning with proper centering on larger screens
+  - Sticky category nav adapts positioning based on screen size
+  - Game modal expanded to max-w-lg/xl for better usability
+
+## Previous Changes (Dec 15, 2025)
 - Fixed z-index issues: "View Order" button now appears above bottom navigation
 - Fixed sticky category navigation positioning to stay below header when scrolling
 - Fixed game page layout to properly display reward content
