@@ -135,5 +135,10 @@ export {
     ReviewsData,
     loadRestaurantConfig,
     loadMenuData,
-    loadAllData
+    loadAllData,
+    getCurrentStatus,
+    advanceToNextStatus,
+    adminConfirmDelivered,
+    resetOrderStatus,
+    getOrderStatusConfig
 };

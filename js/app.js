@@ -921,21 +921,48 @@ class RestaurantApp {
     }
 
     startOrderStatusSimulation() {
-        const statuses = ['received', 'cooking', 'plating', 'delivered'];
+        const statuses = OrderStatusConfig.statuses;
         let currentIndex = 0;
         
         if (this.orderStatusTimer) clearInterval(this.orderStatusTimer);
 
-        this.orderStatusTimer = setInterval(() => {
-            currentIndex++;
-            if (currentIndex >= statuses.length) {
+        const advanceStatus = () => {
+            const currentStatus = statuses[currentIndex];
+            const nextIndex = currentIndex + 1;
+            
+            if (nextIndex >= statuses.length) {
                 clearInterval(this.orderStatusTimer);
-                this.onOrderDelivered();
                 return;
             }
-            appState.updateOrderStatus(statuses[currentIndex]);
+            
+            const nextStatus = statuses[nextIndex];
+            
+            if (nextStatus.requiresAdminConfirm) {
+                clearInterval(this.orderStatusTimer);
+                currentIndex = nextIndex;
+                appState.updateOrderStatus(nextStatus.id);
+                this.renderOrderStatus();
+                return;
+            }
+            
+            currentIndex = nextIndex;
+            appState.updateOrderStatus(nextStatus.id);
             this.renderOrderStatus();
-        }, 5000);
+            
+            if (nextStatus.id === 'delivered') {
+                clearInterval(this.orderStatusTimer);
+                this.onOrderDelivered();
+            }
+        };
+
+        this.orderStatusTimer = setInterval(advanceStatus, 5000);
+    }
+
+    adminConfirmDelivered() {
+        if (this.orderStatusTimer) clearInterval(this.orderStatusTimer);
+        appState.updateOrderStatus('delivered');
+        this.renderOrderStatus();
+        this.onOrderDelivered();
     }
 
     onOrderDelivered() {
