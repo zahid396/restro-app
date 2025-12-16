@@ -384,21 +384,22 @@ class RestaurantApp {
     renderTrendingCard(item, lang) {
         const name = item.name[lang] || item.name.en;
         return `
-        <div class="flex flex-col w-[260px] bg-white dark:bg-card-dark rounded-2xl shadow-md overflow-hidden relative group cursor-pointer" data-item-id="${item.id}">
-            <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 bg-center bg-cover" style='background-image: url("${item.image}");'></div>
-            <button class="absolute top-[230px] right-4 bg-white dark:bg-card-dark rounded-full p-2 shadow-lg z-10 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors" data-favorite="${item.id}">
-                <span class="material-symbols-outlined text-[20px]">favorite</span>
-            </button>
-            <div class="p-4 pt-6 flex flex-col gap-1">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">${name}</h3>
-                <div class="flex items-center gap-6 mt-2">
+        <div class="flex flex-col w-[200px] sm:w-[240px] md:w-[280px] bg-white dark:bg-card-dark rounded-2xl shadow-md overflow-hidden relative group cursor-pointer shrink-0" data-item-id="${item.id}">
+            <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 bg-center bg-cover relative" style='background-image: url("${item.image}");'>
+                <button class="absolute bottom-3 right-3 bg-white dark:bg-card-dark rounded-full p-2 shadow-lg z-10 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors" data-favorite="${item.id}">
+                    <span class="material-symbols-outlined text-[20px]">favorite</span>
+                </button>
+            </div>
+            <div class="p-3 sm:p-4 flex flex-col gap-1">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">${name}</h3>
+                <div class="flex items-center gap-4 sm:gap-6 mt-2">
                     <div class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-orange-500 text-[18px]">thumb_up</span>
-                        <span class="text-sm font-semibold text-text-muted">${this.formatNumber(item.likes)}</span>
+                        <span class="material-symbols-outlined text-orange-500 text-[16px] sm:text-[18px]">thumb_up</span>
+                        <span class="text-xs sm:text-sm font-semibold text-text-muted">${this.formatNumber(item.likes)}</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-blue-400 text-[18px]">chat_bubble</span>
-                        <span class="text-sm font-semibold text-text-muted">${item.comments}</span>
+                        <span class="material-symbols-outlined text-blue-400 text-[16px] sm:text-[18px]">chat_bubble</span>
+                        <span class="text-xs sm:text-sm font-semibold text-text-muted">${item.comments}</span>
                     </div>
                 </div>
             </div>
