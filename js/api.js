@@ -92,7 +92,7 @@ class ApiService {
             method: 'POST',
             body: JSON.stringify({
                 order_id: orderId,
-                item_id: itemId,
+                menu_item_id: itemId,
                 rating,
                 comment
             })
