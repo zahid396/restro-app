@@ -7,7 +7,20 @@ An interactive restaurant ordering app built with vanilla HTML/CSS/JS frontend a
 ```
 /
 ├── index.html          # Single-page app with all screens
-├── router.php          # PHP router for API and static files
+├── router.php          # PHP router for API, admin, and static files
+├── admin/              # Admin panel (PHP + MDBootstrap)
+│   ├── login.php       # Admin login
+│   ├── index.php       # Dashboard with live orders
+│   ├── orders.php      # Order management
+│   ├── categories.php  # Category CRUD
+│   ├── menu-items.php  # Menu item CRUD
+│   ├── tables.php      # Table management + QR codes
+│   ├── payments.php    # Payment methods CRUD
+│   ├── reviews.php     # Review management
+│   ├── rewards.php     # Rewards/games CRUD
+│   ├── settings.php    # Restaurant settings
+│   ├── includes/       # Config, header, footer
+│   └── api/            # Admin-specific API endpoints
 ├── api/
 │   ├── index.php       # API router with endpoint definitions
 │   ├── includes/
@@ -85,7 +98,38 @@ An interactive restaurant ordering app built with vanilla HTML/CSS/JS frontend a
 - Restaurant name branding from database
 - Responsive grid layout for menu items
 
+## Admin Panel
+Access the admin panel at `/admin/login.php`
+
+**Default Credentials:**
+- Username: `admin`
+- Password: `password`
+
+### Admin Features:
+- **Dashboard** - Live pending orders, quick stats, notification alerts
+- **Orders** - View/filter orders, update status, confirm delivery
+- **Categories** - CRUD for menu categories (bilingual)
+- **Menu Items** - Full CRUD with images, prices, tags, availability
+- **Tables & QR** - Table management with QR code generation/download
+- **Payment Methods** - Configure payment options with account details
+- **Reviews** - View/hide/delete customer reviews
+- **Rewards** - Manage game rewards with probability settings
+- **Settings** - Restaurant info, password change
+
+### Live Notifications:
+- AJAX polling every 5 seconds for new orders
+- Audio + visual alerts for new orders
+- Pending order count badge in header
+
 ## Recent Changes (Dec 16, 2025)
+- **Admin Panel Added**:
+  - Full CRUD for all restaurant data
+  - MDBootstrap UI with clean responsive design
+  - Live order notifications with audio alerts
+  - QR code generator for tables
+  - Admin authentication with session management
+  - Order status management (including admin confirm delivery)
+  
 - **Backend Integration Complete**:
   - Added PHP 8 + PostgreSQL backend
   - Created REST API for all frontend data

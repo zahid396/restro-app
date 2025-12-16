@@ -172,14 +172,14 @@ $pending = $pendingOrders->fetchAll();
 </div>
 
 <?php 
-$pageScripts = <<<'SCRIPT'
+$pageScripts = <<<SCRIPT
 <script>
 async function updateStatus(orderId, status) {
     try {
         const response = await fetch('api/update-order-status.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ order_id: orderId, status: status })
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+            body: JSON.stringify({ order_id: orderId, status: status, csrf_token: CSRF_TOKEN })
         });
         const data = await response.json();
         if (data.success) {

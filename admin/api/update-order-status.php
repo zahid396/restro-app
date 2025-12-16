@@ -9,6 +9,12 @@ if (!isLoggedIn()) {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
+
+$csrfToken = $input['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+if (!validateCsrfToken($csrfToken)) {
+    echo json_encode(['error' => 'Invalid security token']);
+    exit;
+}
 $orderId = (int)($input['order_id'] ?? 0);
 $newStatus = $input['status'] ?? '';
 

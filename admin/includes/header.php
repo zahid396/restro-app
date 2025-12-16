@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/config.php'; requireLogin(); $admin = getAdminUser(); ?>
+<?php require_once __DIR__ . '/config.php'; requireLogin(); $admin = getAdminUser(); $csrfToken = generateCsrfToken(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

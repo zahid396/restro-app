@@ -8,6 +8,7 @@ $restaurantId = $_SESSION['restaurant_id'] ?? 1;
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrf();
     $action = $_POST['action'] ?? '';
     
     if ($action === 'update_restaurant') {

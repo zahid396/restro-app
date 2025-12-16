@@ -2,6 +2,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
     <script>
+        const CSRF_TOKEN = '<?php echo $csrfToken; ?>';
         let lastOrderCount = 0;
         let notificationEnabled = true;
         

@@ -4,6 +4,11 @@ require_once __DIR__ . '/../api/includes/db.php';
 
 $error = '';
 
+if (isset($_SESSION['admin_id'])) {
+    header('Location: index.php');
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -15,9 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password_hash'])) {
+            session_regenerate_id(true);
+            
             $_SESSION['admin_id'] = $user['id'];
             $_SESSION['admin_name'] = $user['name'];
             $_SESSION['restaurant_id'] = $user['restaurant_id'];
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             
             $updateStmt = $db->prepare("UPDATE admin_users SET last_login = NOW() WHERE id = ?");
             $updateStmt->execute([$user['id']]);
@@ -30,11 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $error = 'Please enter username and password';
     }
-}
-
-if (isset($_SESSION['admin_id'])) {
-    header('Location: index.php');
-    exit;
 }
 ?>
 <!DOCTYPE html>

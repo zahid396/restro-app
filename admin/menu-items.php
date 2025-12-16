@@ -13,6 +13,7 @@ $categoriesStmt->execute([$restaurantId]);
 $categories = $categoriesStmt->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrf();
     $action = $_POST['action'] ?? '';
     
     if ($action === 'add' || $action === 'edit') {
@@ -138,6 +139,7 @@ $items = $stmt->fetchAll();
                         <i class="fas fa-edit"></i>
                     </button>
                     <form method="POST" class="d-inline" onsubmit="return confirm('Delete this item?')">
+                        <?php echo csrfField(); ?>
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
@@ -153,6 +155,7 @@ $items = $stmt->fetchAll();
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST">
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="add">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Menu Item</h5>
@@ -245,6 +248,7 @@ $items = $stmt->fetchAll();
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST">
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" name="id" id="edit_id">
                 <div class="modal-header">

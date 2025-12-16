@@ -9,6 +9,7 @@ $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrf();
     $action = $_POST['action'] ?? '';
     
     if ($action === 'add') {
@@ -96,6 +97,7 @@ $categories = $stmt->fetchAll();
                         <i class="fas fa-edit"></i>
                     </button>
                     <form method="POST" class="d-inline" onsubmit="return confirm('Delete this category?')">
+                        <?php echo csrfField(); ?>
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="<?php echo $cat['id']; ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
@@ -111,6 +113,7 @@ $categories = $stmt->fetchAll();
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST">
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="add">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Category</h5>
@@ -151,6 +154,7 @@ $categories = $stmt->fetchAll();
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST">
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" name="id" id="edit_id">
                 <div class="modal-header">
