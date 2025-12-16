@@ -1,0 +1,259 @@
+# MASTER PROMPT — PHP + MySQL BACKEND
+
+## CONTEXT (VERY IMPORTANT)
+
+You are building the **backend ONLY** for an already‑finished **vanilla HTML/CSS/JS restaurant ordering frontend**.
+
+The frontend is a **single‑page app** that currently uses mock JSON. Your job is to **replace ALL mock data with real backend APIs**.
+
+⚠️ **DO NOT TOUCH FRONTEND UI OR LOGIC STRUCTURE**
+⚠️ **ASSUME FRONTEND EXPECTS JSON APIs**
+
+The backend must be written in **PHP + MySQL**, suitable for shared hosting or VPS.
+
+---
+
+## ROLE
+
+You are a **senior backend engineer + database architect** experienced with:
+
+* PHP (procedural or lightweight MVC)
+* MySQL
+* REST APIs
+* Real‑time simulation for kitchen/order updates
+* Secure payment callbacks
+
+---
+
+## OBJECTIVE
+
+Build a **production‑ready backend** that:
+
+* Serves menu, categories, and dish details
+* Manages cart → order lifecycle
+* Handles table‑based ordering
+* Supports bill splitting
+* Tracks order status (received → cooking → ready → delivered)
+* Stores reviews & ratings
+* Powers rewards, games, and feedback
+* Can later scale to multiple restaurants
+
+---
+
+## TECH CONSTRAINTS
+
+* Language: **PHP 8+**
+* Database: **MySQL**
+* API style: **REST (JSON only)**
+* Auth: **Table‑based session (no login required)**
+* Compatible with vanilla JS `fetch()`
+
+---
+
+## DATABASE DESIGN (MANDATORY)
+
+### Core Tables
+
+1. `restaurants`
+
+* id
+* name
+* branding_config (JSON)
+* is_active
+
+2. `tables`
+
+* id
+* restaurant_id
+* table_number
+* status (free/busy)
+
+3. `categories`
+
+* id
+* restaurant_id
+* name_en
+* name_bn
+* sort_order
+
+4. `menu_items`
+
+* id
+* category_id
+* name_en
+* name_bn
+* description
+* price
+* image_url
+* is_spicy
+* is_veg
+* halal
+* is_available
+* prep_time
+
+5. `combos`
+
+* id
+* trigger_item_id
+* suggested_item_id
+* discount_amount
+
+6. `orders`
+
+* id
+* restaurant_id
+* table_id
+* status
+* total_amount
+* payment_method
+* created_at
+
+7. `order_items`
+
+* id
+* order_id
+* menu_item_id
+* quantity
+* unit_price
+
+8. `bill_splits`
+
+* id
+* order_id
+* member_count
+* per_person_amount
+
+9. `reviews`
+
+* id
+* order_id
+* menu_item_id
+* rating
+* comment
+* created_at
+
+10. `games_rewards`
+
+* id
+* reward_type
+* reward_value
+* probability
+
+---
+
+## API ENDPOINTS (FRONTEND DEPENDENT)
+
+### Restaurant & Table
+
+* `GET /api/restaurant/config`
+* `GET /api/table/{tableNumber}`
+
+---
+
+### Menu
+
+* `GET /api/menu/categories`
+* `GET /api/menu/items`
+* `GET /api/menu/item/{id}`
+
+All responses must support:
+
+* Language (`?lang=en|bn`)
+* Availability filtering
+
+---
+
+### Cart → Order Flow
+
+* `POST /api/order/create`
+  Payload:
+
+```json
+{
+  "table": 12,
+  "items": [{"id":1,"qty":2}],
+  "payment_method":"cash"
+}
+```
+
+* `GET /api/order/{orderId}`
+* `POST /api/order/status`
+
+---
+
+### Bill Split
+
+* `POST /api/order/split`
+  Payload:
+
+```json
+{
+  "order_id": 45,
+  "members": 4
+}
+```
+
+---
+
+### Rewards & Games
+
+* `GET /api/game/reward`
+* Probability‑based reward selection
+
+---
+
+### Feedback
+
+* `POST /api/review/submit`
+
+---
+
+## ORDER STATUS LOGIC
+
+Order lifecycle:
+
+1. received
+2. cooking
+3. ready
+4. delivered
+
+Status can be:
+
+* Auto‑progressed (timer simulation)
+* Or manually updated by staff panel later
+
+---
+
+## SECURITY & VALIDATION
+
+* Validate table numbers
+* Prevent duplicate orders
+* Sanitize all inputs
+* Protect against SQL injection
+* CORS enabled for frontend
+
+---
+
+## OUTPUT EXPECTATION
+
+Produce:
+
+1. MySQL schema (CREATE TABLE statements)
+2. API endpoint list
+3. PHP folder structure
+4. Sample PHP API implementation
+5. JSON response examples
+
+---
+
+## FINAL REQUIREMENT
+
+All frontend data must be fetched from this backend.
+
+Mock data must be fully removable after integration.
+
+Build clean, readable PHP — no unnecessary frameworks.
+
+---
+
+END OF PROMPT
