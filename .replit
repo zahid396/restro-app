@@ -1,4 +1,4 @@
-modules = ["python-3.11", "php-8.3", "php-8.4", "postgresql-16"]
+modules = ["python-3.11", "php-8.3", "php-8.4", "postgresql-16", "php-8.2"]
 [nix]
 channel = "stable-25_05"
 packages = ["unzip"]

@@ -6,6 +6,16 @@ if (preg_match('#^/api#', $uri)) {
     exit;
 }
 
+if (preg_match('#^/admin(/.*)?$#', $uri)) {
+    $adminPath = $uri === '/admin' || $uri === '/admin/' ? '/admin/index.php' : $uri;
+    $adminFile = __DIR__ . $adminPath;
+    
+    if (is_file($adminFile) && pathinfo($adminFile, PATHINFO_EXTENSION) === 'php') {
+        require $adminFile;
+        exit;
+    }
+}
+
 $file = __DIR__ . $uri;
 
 if ($uri !== '/' && is_file($file)) {
