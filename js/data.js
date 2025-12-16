@@ -27,13 +27,46 @@ const RewardsData = {
 
 const OrderStatusConfig = {
     statuses: [
-        { id: 'received', label: { en: 'Order Received', bn: 'অর্ডার গৃহীত' }, icon: 'check', duration: 3000 },
-        { id: 'cooking', label: { en: 'Cooking', bn: 'রান্না হচ্ছে' }, icon: 'skillet', duration: 8000, chefMessage: { en: 'Chef is on it!', bn: 'শেফ এটি করছে!' } },
-        { id: 'ready', label: { en: 'Ready', bn: 'প্রস্তুত' }, icon: 'room_service', duration: 4000, message: { en: 'Almost ready', bn: 'প্রায় প্রস্তুত' } },
-        { id: 'delivered', label: { en: 'Served', bn: 'পরিবেশিত' }, icon: 'dinner_dining', duration: 0, message: { en: 'Enjoy your meal', bn: 'আপনার খাবার উপভোগ করুন' } }
+        { id: 'received', label: { en: 'Order Received', bn: 'অর্ডার নেওয়া হয়েছে' }, icon: 'check', duration: 3000 },
+        { id: 'cooking', label: { en: 'Cooking', bn: 'রান্না হচ্ছে' }, icon: 'skillet', duration: 8000, chefMessage: { en: 'Chef is on it!', bn: 'Chef is on it!' } },
+        { id: 'ready', label: { en: 'Ready', bn: 'প্রস্তুত' }, icon: 'room_service', duration: null, message: { en: 'Almost ready', bn: 'প্রায় প্রস্তুত' }, requiresAdminConfirm: true },
+        { id: 'delivered', label: { en: 'Served', bn: 'পরিবেশন করা হয়েছে' }, icon: 'dinner_dining', duration: 0, message: { en: 'Enjoy your meal', bn: 'আপনার খাবার উপভোগ করুন' } }
     ],
     etaMinutes: 12
 };
+
+let currentStatusIndex = 0;
+
+function getCurrentStatus() {
+    return OrderStatusConfig.statuses[currentStatusIndex];
+}
+
+function advanceToNextStatus() {
+    if (currentStatusIndex < OrderStatusConfig.statuses.length - 1) {
+        const nextStatusIndex = currentStatusIndex + 1;
+        const nextStatus = OrderStatusConfig.statuses[nextStatusIndex];
+
+        if (nextStatus.requiresAdminConfirm) {
+            return false;
+        }
+
+        currentStatusIndex = nextStatusIndex;
+        return true;
+    }
+    return false;
+}
+
+function adminConfirmDelivered() {
+    currentStatusIndex = OrderStatusConfig.statuses.length - 1;
+}
+
+function resetOrderStatus() {
+    currentStatusIndex = 0;
+}
+
+function getOrderStatusConfig() {
+    return OrderStatusConfig;
+}
 
 async function loadRestaurantConfig() {
     try {
