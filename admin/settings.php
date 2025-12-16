@@ -64,6 +64,7 @@ $restaurant = $stmt->fetch();
         <div class="table-card p-4">
             <h5 class="mb-4 fw-bold">Restaurant Information</h5>
             <form method="POST">
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="update_restaurant">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -96,6 +97,7 @@ $restaurant = $stmt->fetch();
         <div class="table-card p-4">
             <h5 class="mb-4 fw-bold">Change Password</h5>
             <form method="POST">
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="update_password">
                 <div class="mb-3">
                     <label class="form-label">Current Password</label>

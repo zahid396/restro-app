@@ -25,9 +25,10 @@ $tableStmt->execute([$tableNumber, $restaurantId]);
 $table = $tableStmt->fetch();
 
 if (!$table) {
-    $tableStmt = $db->prepare("INSERT INTO restaurant_tables (restaurant_id, table_number, status) VALUES (?, ?, 'busy') RETURNING id");
+    $tableStmt = $db->prepare("INSERT INTO restaurant_tables (restaurant_id, table_number, status) VALUES (?, ?, 'busy')");
     $tableStmt->execute([$restaurantId, $tableNumber]);
-    $table = $tableStmt->fetch();
+    $tableId = $db->lastInsertId();
+    $table = ['id' => $tableId];
 } else {
     $updateStmt = $db->prepare("UPDATE restaurant_tables SET status = 'busy' WHERE id = ?");
     $updateStmt->execute([$table['id']]);
@@ -66,11 +67,12 @@ $service = round($totalAmount * 0.05);
 $grandTotal = $totalAmount + $vat + $service;
 
 $orderStmt = $db->prepare("
-    INSERT INTO orders (restaurant_id, table_id, table_number, status, total_amount, payment_method) 
-    VALUES (?, ?, ?, 'received', ?, ?) RETURNING id, created_at
+    INSERT INTO orders (restaurant_id, table_id, table_number, status, total_amount, payment_method, created_at) 
+    VALUES (?, ?, ?, 'received', ?, ?, NOW())
 ");
 $orderStmt->execute([$restaurantId, $table['id'], $tableNumber, $grandTotal, $paymentMethod]);
-$order = $orderStmt->fetch();
+$orderId = $db->lastInsertId();
+$order = ['id' => $orderId, 'created_at' => date('Y-m-d H:i:s')];
 
 foreach ($orderItems as $oi) {
     $oiStmt = $db->prepare("INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price) VALUES (?, ?, ?, ?)");

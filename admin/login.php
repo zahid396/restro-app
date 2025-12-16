@@ -1,31 +1,61 @@
 <?php
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', isset($_SERVER['HTTPS']) ? 1 : 0);
+ini_set('session.use_strict_mode', 1);
 session_start();
+
 require_once __DIR__ . '/../api/includes/db.php';
 
 $error = '';
+$maxAttempts = 5;
+$lockoutTime = 900;
 
 if (isset($_SESSION['admin_id'])) {
     header('Location: index.php');
     exit;
 }
 
+function getClientIP() {
+    return $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+}
+
+function checkLoginAttempts($db, $ip) {
+    global $maxAttempts, $lockoutTime;
+    $stmt = $db->prepare("SELECT COUNT(*) as attempts, MAX(attempt_time) as last_attempt FROM login_attempts WHERE ip_address = ? AND attempt_time > DATE_SUB(NOW(), INTERVAL ? SECOND) AND success = 0");
+    $stmt->execute([$ip, $lockoutTime]);
+    $result = $stmt->fetch();
+    return $result['attempts'] < $maxAttempts;
+}
+
+function recordLoginAttempt($db, $ip, $username, $success) {
+    $stmt = $db->prepare("INSERT INTO login_attempts (ip_address, username, success, attempt_time) VALUES (?, ?, ?, NOW())");
+    $stmt->execute([$ip, $username, $success ? 1 : 0]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     
-    if ($username && $password) {
-        $db = getDB();
-        $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = ? AND is_active = true");
+    $db = getDB();
+    $clientIP = getClientIP();
+    
+    if (!checkLoginAttempts($db, $clientIP)) {
+        $error = 'Too many failed attempts. Please try again in 15 minutes.';
+    } elseif ($username && $password) {
+        $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = ? AND is_active = 1");
         $stmt->execute([$username]);
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password_hash'])) {
+            recordLoginAttempt($db, $clientIP, $username, true);
             session_regenerate_id(true);
             
             $_SESSION['admin_id'] = $user['id'];
             $_SESSION['admin_name'] = $user['name'];
             $_SESSION['restaurant_id'] = $user['restaurant_id'];
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $_SESSION['login_time'] = time();
+            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
             
             $updateStmt = $db->prepare("UPDATE admin_users SET last_login = NOW() WHERE id = ?");
             $updateStmt->execute([$user['id']]);
@@ -33,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: index.php');
             exit;
         } else {
+            recordLoginAttempt($db, $clientIP, $username, false);
             $error = 'Invalid username or password';
         }
     } else {
@@ -117,9 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn btn-primary btn-login btn-lg">Sign In</button>
         </form>
         
-        <p class="text-center mt-4 text-muted small">
-            Default: admin / password
-        </p>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
 </body>

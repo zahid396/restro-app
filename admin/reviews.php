@@ -147,6 +147,7 @@ $stats = $statsStmt->fetch();
                 </td>
                 <td>
                     <form method="POST" class="d-inline">
+                        <?php echo csrfField(); ?>
                         <input type="hidden" name="action" value="toggle_visibility">
                         <input type="hidden" name="id" value="<?php echo $review['id']; ?>">
                         <button type="submit" class="btn btn-sm btn-outline-secondary" title="Toggle visibility">
@@ -154,6 +155,7 @@ $stats = $statsStmt->fetch();
                         </button>
                     </form>
                     <form method="POST" class="d-inline" onsubmit="return confirm('Delete this review?')">
+                        <?php echo csrfField(); ?>
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="<?php echo $review['id']; ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>

@@ -23,7 +23,7 @@ $tables = $tableStats->fetch();
 
 $pendingOrders = $db->prepare("
     SELECT o.*, 
-           (SELECT string_agg(mi.name_en || ' x' || oi.quantity, ', ') 
+           (SELECT GROUP_CONCAT(CONCAT(mi.name_en, ' x', oi.quantity) SEPARATOR ', ') 
             FROM order_items oi 
             JOIN menu_items mi ON oi.menu_item_id = mi.id 
             WHERE oi.order_id = o.id) as items_summary

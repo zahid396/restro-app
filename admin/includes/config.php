@@ -1,13 +1,32 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_secure', isset($_SERVER['HTTPS']) ? 1 : 0);
+    ini_set('session.use_strict_mode', 1);
     session_start();
 }
 
 require_once __DIR__ . '/../../api/includes/config.php';
 require_once __DIR__ . '/../../api/includes/db.php';
 
+define('SESSION_TIMEOUT', 3600);
+
 function isLoggedIn() {
-    return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
+    if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
+        return false;
+    }
+    if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > SESSION_TIMEOUT) {
+        session_unset();
+        session_destroy();
+        return false;
+    }
+    if (isset($_SESSION['user_agent']) && $_SESSION['user_agent'] !== ($_SERVER['HTTP_USER_AGENT'] ?? '')) {
+        session_unset();
+        session_destroy();
+        return false;
+    }
+    $_SESSION['last_activity'] = time();
+    return true;
 }
 
 function requireLogin() {

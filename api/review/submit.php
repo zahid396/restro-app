@@ -19,19 +19,22 @@ if ($rating < 1 || $rating > 5) {
 $db = getDB();
 
 $stmt = $db->prepare("
-    INSERT INTO reviews (order_id, menu_item_id, user_name, avatar, rating, comment) 
-    VALUES (?, ?, ?, ?, ?, ?) RETURNING id, created_at
+    INSERT INTO reviews (order_id, menu_item_id, user_name, avatar, rating, comment, created_at) 
+    VALUES (?, ?, ?, ?, ?, ?, NOW())
 ");
 $stmt->execute([$orderId, $menuItemId ?: null, $userName, $avatar, $rating, $comment]);
-$review = $stmt->fetch();
+$reviewId = $db->lastInsertId();
 
 if ($menuItemId > 0) {
-    $updateStmt = $db->prepare("UPDATE menu_items SET comments_count = comments_count + 1 WHERE id = ?");
-    $updateStmt->execute([$menuItemId]);
+    try {
+        $updateStmt = $db->prepare("UPDATE menu_items SET likes = likes + 1 WHERE id = ?");
+        $updateStmt->execute([$menuItemId]);
+    } catch (Exception $e) {
+    }
 }
 
 jsonResponse([
     'success' => true,
-    'review_id' => $review['id'],
-    'created_at' => $review['created_at']
+    'review_id' => $reviewId,
+    'created_at' => date('Y-m-d H:i:s')
 ]);

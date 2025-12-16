@@ -52,8 +52,13 @@ An interactive restaurant ordering app built with vanilla HTML/CSS/JS frontend a
 └── attached_assets/    # Original static screens (reference)
 ```
 
-## Database Schema (PostgreSQL)
+## Database Schema (MySQL - Updated Dec 16, 2025)
+Full schema available in `/database/schema.sql`
+
+### Tables:
 - `restaurants` - Restaurant configuration and branding
+- `admin_users` - Admin user accounts with password hashing
+- `login_attempts` - Security rate limiting for login attempts
 - `restaurant_tables` - Table management
 - `categories` - Menu categories with EN/BN names
 - `menu_items` - Full menu with prices, images, tags, mood filters
@@ -61,7 +66,9 @@ An interactive restaurant ordering app built with vanilla HTML/CSS/JS frontend a
 - `order_items` - Items in each order
 - `bill_splits` - Bill splitting records
 - `reviews` - Customer feedback and ratings
+- `payment_methods` - Configurable payment options
 - `games_rewards` - Probability-based rewards for mini-game
+- `user_rewards` - Claimed rewards tracking
 
 ## API Endpoints
 ### Restaurant & Table
@@ -150,5 +157,21 @@ Serves on http://0.0.0.0:5000
 
 ## Tech Stack
 - Frontend: Vanilla JavaScript (ES6 modules), Tailwind CSS (CDN), Material Symbols
-- Backend: PHP 8.4, PostgreSQL
+- Backend: PHP 8.4, MySQL (migrated from PostgreSQL)
 - No frameworks - plain PHP for backend per requirement
+
+## Security Features (Added Dec 16, 2025)
+- Login rate limiting (5 attempts, 15-min lockout)
+- Session security (httponly cookies, strict mode, timeout)
+- User agent validation for session hijacking prevention
+- CSRF token protection on all admin forms
+- Input validation and sanitization on all API endpoints
+- Security headers (X-Frame-Options, X-XSS-Protection, X-Content-Type-Options)
+- Password hashing with bcrypt (password_hash/password_verify)
+
+## MySQL Database Configuration
+Set environment variables:
+- `MYSQL_URL` or `DATABASE_URL` - Full connection URL
+- Or individual: `MYSQL_HOST`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`
+
+Default admin: username `admin`, password `password` (change after first login!)

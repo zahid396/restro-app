@@ -32,7 +32,7 @@ $updateStmt = $db->prepare("UPDATE orders SET status = ?, updated_at = CURRENT_T
 $updateStmt->execute([$newStatus, $orderId]);
 
 if ($newStatus === 'delivered') {
-    $tableStmt = $db->prepare("UPDATE restaurant_tables SET status = 'free' WHERE id = ?");
+    $tableStmt = $db->prepare("UPDATE restaurant_tables SET status = 'available' WHERE id = ?");
     $tableStmt->execute([$order['table_id']]);
 }
 
