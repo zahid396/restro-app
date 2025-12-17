@@ -33,3 +33,11 @@ waitForPort = 5000
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[userenv]
+
+[userenv.shared]
+MYSQL_HOST = "localhost"
+MYSQL_DATABASE = "restro"
+MYSQL_USER = "root"
+MYSQL_PASSWORD = ""
