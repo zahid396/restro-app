@@ -7,21 +7,21 @@ An interactive restaurant ordering app built with vanilla HTML/CSS/JS frontend a
 ```
 /
 ├── index.html          # Single-page app with all screens
+├── admin.html          # Standalone admin panel (inline CSS/JS)
 ├── router.php          # PHP router for API, admin, and static files
-├── admin/              # Admin panel (PHP + MDBootstrap)
-│   ├── login.php       # Admin login
-│   ├── index.php       # Dashboard with live orders
-│   ├── orders.php      # Order management
-│   ├── categories.php  # Category CRUD
-│   ├── menu-items.php  # Menu item CRUD
-│   ├── tables.php      # Table management + QR codes
-│   ├── payments.php    # Payment methods CRUD
-│   ├── reviews.php     # Review management
-│   ├── rewards.php     # Rewards/games CRUD
-│   ├── settings.php    # Restaurant settings
-│   ├── includes/       # Config, header, footer
-│   └── api/            # Admin-specific API endpoints
 ├── api/
+│   ├── admin/              # Admin-specific API endpoints
+│   │   ├── auth.php        # Token-based login/logout/verify
+│   │   ├── auth_helpers.php # Token generation and verification helpers
+│   │   ├── dashboard.php   # Stats and pending orders
+│   │   ├── orders.php      # Order management
+│   │   ├── categories.php  # Category CRUD
+│   │   ├── menu-items.php  # Menu item CRUD
+│   │   ├── tables.php      # Table CRUD
+│   │   ├── payments.php    # Payment methods CRUD
+│   │   ├── reviews.php     # Review management
+│   │   ├── rewards.php     # Rewards CRUD
+│   │   └── settings.php    # Restaurant settings
 │   ├── index.php       # API router with endpoint definitions
 │   ├── includes/
 │   │   ├── config.php  # Database configuration
@@ -105,12 +105,29 @@ Full schema available in `/database/schema.sql`
 - Restaurant name branding from database
 - Responsive grid layout for menu items
 
-## Admin Panel
-Access the admin panel at `/admin/login.php`
+## Admin Panel (Standalone HTML - Updated Dec 17, 2025)
+Access the admin panel at `/admin.html`
 
 **Default Credentials:**
 - Username: `admin`
 - Password: `password`
+
+### Architecture:
+- **Single HTML File**: `admin.html` with inline CSS and vanilla JavaScript
+- **Separate Backend APIs**: All in `api/admin/` folder for flexible hosting
+- **Token-Based Auth**: No cookies/sessions - WebView and cross-origin compatible
+
+### Admin API Endpoints (api/admin/):
+- `auth.php?action=login|verify|logout` - Token-based authentication
+- `dashboard.php` - Today's stats, revenue, pending orders
+- `orders.php` - List/filter orders, update status
+- `categories.php` - CRUD for menu categories
+- `menu-items.php` - CRUD for menu items with category filter
+- `tables.php` - CRUD for tables with QR codes
+- `payments.php` - CRUD for payment methods
+- `reviews.php` - List reviews, toggle visibility, delete
+- `rewards.php` - CRUD for game rewards with probability
+- `settings.php` - Restaurant info, password change
 
 ### Admin Features:
 - **Dashboard** - Live pending orders, quick stats, notification alerts
@@ -124,15 +141,23 @@ Access the admin panel at `/admin/login.php`
 - **Settings** - Restaurant info, password change
 
 ### Live Notifications:
-- AJAX polling every 5 seconds for new orders
-- Audio + visual alerts for new orders
+- Auto-refresh every 30 seconds for dashboard
 - Pending order count badge in header
 
-## Recent Changes (Dec 16, 2025)
+## Recent Changes (Dec 17, 2025)
+- **Admin Panel Rebuilt as Standalone HTML**:
+  - Single HTML file (admin.html) with inline CSS and JavaScript
+  - Separate API endpoints in api/admin/ folder for flexible hosting
+  - Token-based authentication (no cookies/sessions - WebView compatible)
+  - All admin functionality: Dashboard, Orders, Categories, Menu Items, Tables, Payments, Reviews, Rewards, Settings
+  - QR code generation for tables with download capability
+  - Auto-refresh dashboard every 30 seconds
+  - Responsive design with clean UI
+
+## Previous Changes (Dec 16, 2025)
 - **Admin Panel Added**:
   - Full CRUD for all restaurant data
-  - MDBootstrap UI with clean responsive design
-  - Live order notifications with audio alerts
+  - Live order notifications
   - QR code generator for tables
   - Admin authentication with session management
   - Order status management (including admin confirm delivery)
