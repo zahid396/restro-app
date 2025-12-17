@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--gray-100); min-height: 100vh; }
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%); }
+        .login-box { background: #fff; padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .login-box h1 { text-align: center; margin-bottom: 30px; color: var(--gray-800); }
+        .login-box .logo { text-align: center; font-size: 48px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-700); }
+        .form-control { width: 100%; padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 8px; font-size: 16px; transition: border-color 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--primary); }
+        .form-control::placeholder { color: var(--gray-400); }
+        select.form-control { cursor: pointer; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: var(--warning); color: #fff; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-info { background: var(--info); color: #fff; }
+        .btn-info:hover { background: #2563eb; }
+        .btn-secondary { background: var(--gray-200); color: var(--gray-700); }
+        .btn-secondary:hover { background: var(--gray-300); }
+        .btn-outline { background: transparent; border: 2px solid; }
+        .btn-outline-primary { border-color: var(--primary); color: var(--primary); }
+        .btn-outline-primary:hover { background: var(--primary); color: #fff; }
+        .btn-outline-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-outline-danger:hover { background: var(--danger); color: #fff; }
+        .btn-outline-secondary { border-color: var(--gray-300); color: var(--gray-600); }
+        .btn-outline-secondary:hover { background: var(--gray-200); }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        .btn-block { width: 100%; }
+        .btn-group { display: flex; gap: 8px; }
+        .app-container { display: none; }
+        .app-container.active { display: flex; }
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-width); background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%); padding: 20px 0; z-index: 1000; overflow-y: auto; }
+        .sidebar-brand { padding: 10px 25px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 20px; }
+        .sidebar-brand small { color: rgba(255,255,255,0.5); font-size: 12px; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li a { display: flex; align-items: center; padding: 12px 25px; color: rgba(255,255,255,0.7); text-decoration: none; transition: all 0.3s; border-left: 3px solid transparent; cursor: pointer; }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: rgba(255,255,255,0.1); color: #fff; border-left-color: var(--primary); }
+        .sidebar-menu li a .material-icons-outlined { margin-right: 12px; font-size: 22px; }
+        .main-content { margin-left: var(--sidebar-width); padding: 20px 30px; min-height: 100vh; flex: 1; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 15px 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .page-title { font-size: 24px; font-weight: 700; color: var(--gray-800); }
+        .notification-bell { position: relative; cursor: pointer; }
+        .notification-badge { position: absolute; top: -8px; right: -8px; background: var(--danger); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 50px; min-width: 18px; text-align: center; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .row { display: flex; flex-wrap: wrap; margin: -12px; }
+        .col { padding: 12px; }
+        .col-3 { width: 25%; }
+        .col-4 { width: 33.333%; }
+        .col-6 { width: 50%; }
+        .col-8 { width: 66.666%; }
+        .col-12 { width: 100%; }
+        .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-stat { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card-stat:hover { transform: translateY(-2px); }
+        .card-stat .icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .card-stat h3 { font-size: 28px; font-weight: 700; margin: 10px 0 5px; color: var(--gray-800); }
+        .card-stat p { color: var(--gray-500); font-size: 14px; }
+        .card-body { padding: 20px; }
+        .card-header { padding: 15px 20px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+        .card-footer { padding: 15px 20px; border-top: 1px solid var(--gray-200); background: var(--gray-50); border-radius: 0 0 12px 12px; }
+        .card-img-top { width: 100%; height: 150px; object-fit: cover; border-radius: 12px 12px 0 0; }
+        .table-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        table th { background: var(--gray-50); font-weight: 600; text-align: left; padding: 12px 16px; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); }
+        table td { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+        table tr:hover { background: var(--gray-50); }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-secondary { background: var(--gray-200); color: var(--gray-600); }
+        .badge-primary { background: #e0e7ff; color: #3730a3; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .status-received { background: #fef3c7; color: #92400e; }
+        .status-cooking { background: #dbeafe; color: #1e40af; }
+        .status-ready { background: #ede9fe; color: #5b21b6; }
+        .status-delivered { background: #d1fae5; color: #065f46; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+        .order-card { background: #fff; border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 4px solid; box-shadow: 0 1px 5px rgba(0,0,0,0.05); }
+        .order-card.status-received { border-left-color: var(--warning); }
+        .order-card.status-cooking { border-left-color: var(--info); }
+        .order-card.status-ready { border-left-color: #8b5cf6; }
+        .order-card.status-delivered { border-left-color: var(--success); }
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-warning { background: #fef3c7; color: #92400e; }
+        .alert-danger { background: #fee2e2; color: #991b1b; }
+        .alert-info { background: #dbeafe; color: #1e40af; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 18px; font-weight: 600; color: var(--gray-800); }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-500); }
+        .modal-close:hover { color: var(--gray-800); }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; background: var(--gray-50); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); }
+        .empty-state .material-icons-outlined { font-size: 64px; margin-bottom: 15px; }
+        .text-muted { color: var(--gray-500); }
+        .text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mb-3 { margin-bottom: 16px; }
+        .mb-4 { margin-bottom: 24px; }
+        .mt-3 { margin-top: 16px; }
+        .mt-4 { margin-top: 24px; }
+        .me-2 { margin-right: 8px; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .d-flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .align-center { align-items: center; }
+        .text-center { text-align: center; }
+        .form-check { display: flex; align-items: center; gap: 8px; }
+        .form-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .img-placeholder { width: 50px; height: 50px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .img-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+        .qr-container { display: flex; justify-content: center; margin-bottom: 15px; }
+        .table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .reward-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .filter-bar { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; padding: 20px; background: #fff; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .filter-bar .form-group { margin-bottom: 0; min-width: 150px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .pulse { animation: pulse 2s infinite; }
+        .text-warning { color: var(--warning); }
+        .loading { display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; position: relative; }
+            .main-content { margin-left: 0; }
+            .col-3, .col-4, .col-6, .col-8 { width: 100%; }
+            .row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <div class="logo">🍽️</div>
+            <h1>Admin Login</h1>
+            <div id="loginError" class="alert alert-danger" style="display: none;"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" class="form-control" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="appContainer" class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <h4>🍽️ Restaurant</h4>
+                <small>Admin Panel</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a data-section="dashboard" class="active"><span class="material-icons-outlined">dashboard</span> Dashboard</a></li>
+                <li><a data-section="orders"><span class="material-icons-outlined">receipt_long</span> Orders</a></li>
+                <li><a data-section="categories"><span class="material-icons-outlined">category</span> Categories</a></li>
+                <li><a data-section="menu-items"><span class="material-icons-outlined">restaurant_menu</span> Menu Items</a></li>
+                <li><a data-section="tables"><span class="material-icons-outlined">table_restaurant</span> Tables & QR</a></li>
+                <li><a data-section="payments"><span class="material-icons-outlined">payments</span> Payment Methods</a></li>
+                <li><a data-section="reviews"><span class="material-icons-outlined">reviews</span> Reviews</a></li>
+                <li><a data-section="rewards"><span class="material-icons-outlined">emoji_events</span> Rewards</a></li>
+                <li><a data-section="settings"><span class="material-icons-outlined">settings</span> Settings</a></li>
+                <li><a id="logoutBtn"><span class="material-icons-outlined">logout</span> Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <section id="section-dashboard" class="section active">
+                <div class="top-bar">
+                    <h1 class="page-title">Dashboard</h1>
+                    <div class="d-flex align-center gap-3">
+                        <div class="notification-bell" onclick="navigateTo('orders')">
+                            <span class="material-icons-outlined" style="font-size: 28px;">notifications</span>
+                            <span class="notification-badge" id="pendingBadge">0</span>
+                        </div>
+                        <span class="text-muted">Welcome, <span id="adminName">Admin</span></span>
+                    </div>
+                </div>
+                <div id="dashboardContent"></div>
+            </section>
+
+            <section id="section-orders" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Orders Management</h1>
+                </div>
+                <div id="ordersContent"></div>
+            </section>
+
+            <section id="section-categories" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Categories</h1>
+                    <button class="btn btn-primary" onclick="openModal('categoryModal')"><i class="fas fa-plus me-2"></i>Add Category</button>
+                </div>
+                <div id="categoriesContent"></div>
+            </section>
+
+            <section id="section-menu-items" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Menu Items</h1>
+                    <button class="btn btn-primary" onclick="openModal('menuItemModal')"><i class="fas fa-plus me-2"></i>Add Item</button>
+                </div>
+                <div id="menuItemsContent"></div>
+            </section>
+
+            <section id="section-tables" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Tables & QR Codes</h1>
+                    <button class="btn btn-primary" onclick="openModal('tableModal')"><i class="fas fa-plus me-2"></i>Add Table</button>
+                </div>
+                <div id="tablesContent"></div>
+            </section>
+
+            <section id="section-payments" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Payment Methods</h1>
+                    <button class="btn btn-primary" onclick="openModal('paymentModal')"><i class="fas fa-plus me-2"></i>Add Payment Method</button>
+                </div>
+                <div id="paymentsContent"></div>
+            </section>
+
+            <section id="section-reviews" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Customer Reviews</h1>
+                </div>
+                <div id="reviewsContent"></div>
+            </section>
+
+            <section id="section-rewards" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Rewards & Games</h1>
+                    <button class="btn btn-primary" onclick="openModal('rewardModal')"><i class="fas fa-plus me-2"></i>Add Reward</button>
+                </div>
+                <div id="rewardsContent"></div>
+            </section>
+
+            <section id="section-settings" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Settings</h1>
+                </div>
+                <div id="settingsContent"></div>
+            </section>
+        </main>
+    </div>
+
+    <div id="categoryModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle">Add Category</h3>
+                <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <form id="categoryForm">
+                <div class="modal-body">
+                    <input type="hidden" id="categoryEditId">
+                    <div class="form-group" id="categoryIdGroup">
+                        <label>Category ID (lowercase, no spaces)</label>
+                        <input type="text" id="categoryId" class="form-control" pattern="[a-z0-9_]+" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Name (English)</label>
+                        <input type="text" id="categoryNameEn" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Name (Bengali)</label>
+                        <input type="text" id="categoryNameBn" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Icon (Material Icon name)</label>
+                        <input type="text" id="categoryIcon" class="form-control" value="category">
+                    </div>
+                    <div class="form-group">
+                        <label>Sort Order</label>
+                        <input type="number" id="categorySortOrder" class="form-control" value="0">
+                    </div>
+                    <div class="form-check" id="categoryActiveGroup" style="display: none;">
+                        <input type="checkbox" id="categoryIsActive" checked>
+                        <label>Active</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="menuItemModal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="menuItemModalTitle">Add Menu Item</h3>
+                <button class="modal-close" onclick="closeModal('menuItemModal')">&times;</button>
+            </div>
+            <form id="menuItemForm">
+                <div class="modal-body">
+                    <input type="hidden" id="menuItemEditId">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="menuItemCategory" class="form-control" required></select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Price (৳)</label>
+                                <input type="number" id="menuItemPrice" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name (English)</label>
+                                <input type="text" id="menuItemNameEn" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name (Bengali)</label>
+                                <input type="text" id="menuItemNameBn" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Description (English)</label>
+                                <textarea id="menuItemDescEn" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Description (Bengali)</label>
+                                <textarea id="menuItemDescBn" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="url" id="menuItemImage" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Weight/Size</label>
+                                <input type="text" id="menuItemWeight" class="form-control" placeholder="e.g., 250g">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Tags (comma separated)</label>
+                                <input type="text" id="menuItemTags" class="form-control" placeholder="spicy, popular">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Mood (comma separated)</label>
+                                <input type="text" id="menuItemMood" class="form-control" placeholder="spicy, comfort">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Allergens</label>
+                        <input type="text" id="menuItemAllergens" class="form-control" placeholder="e.g., Contains nuts, dairy">
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input type="checkbox" id="menuItemAvailable" checked>
+                            <label>Available</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="menuItemTrending">
+                            <label>Trending</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('menuItemModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="tableModal" class="modal-overlay">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 id="tableModalTitle">Add Table</h3>
+                <button class="modal-close" onclick="closeModal('tableModal')">&times;</button>
+            </div>
+            <form id="tableForm">
+                <div class="modal-body">
+                    <input type="hidden" id="tableEditId">
+                    <div class="form-group" id="tableNumberGroup">
+                        <label>Table Number</label>
+                        <input type="number" id="tableNumber" class="form-control" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacity (seats)</label>
+                        <input type="number" id="tableCapacity" class="form-control" value="4" min="1">
+                    </div>
+                    <div class="form-group" id="tableStatusGroup" style="display: none;">
+                        <label>Status</label>
+                        <select id="tableStatus" class="form-control">
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                            <option value="reserved">Reserved</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('tableModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="paymentModalTitle">Add Payment Method</h3>
+                <button class="modal-close" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <form id="paymentForm">
+                <div class="modal-body">
+                    <input type="hidden" id="paymentEditId">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name (English)</label>
+                                <input type="text" id="paymentNameEn" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name (Bengali)</label>
+                                <input type="text" id="paymentNameBn" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select id="paymentType" class="form-control">
+                                    <option value="cash">Cash</option>
+                                    <option value="card">Card</option>
+                                    <option value="mobile">Mobile Payment</option>
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Icon</label>
+                                <input type="text" id="paymentIcon" class="form-control" value="payments">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Number</label>
+                        <input type="text" id="paymentAccountNumber" class="form-control" placeholder="e.g., 01712345678">
+                    </div>
+                    <div class="form-group">
+                        <label>Account Name</label>
+                        <input type="text" id="paymentAccountName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Instructions</label>
+                        <textarea id="paymentInstructions" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Sort Order</label>
+                        <input type="number" id="paymentSortOrder" class="form-control" value="0">
+                    </div>
+                    <div class="form-check" id="paymentActiveGroup" style="display: none;">
+                        <input type="checkbox" id="paymentIsActive" checked>
+                        <label>Active</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('paymentModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="rewardModal" class="modal-overlay">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 id="rewardModalTitle">Add Reward</h3>
+                <button class="modal-close" onclick="closeModal('rewardModal')">&times;</button>
+            </div>
+            <form id="rewardForm">
+                <div class="modal-body">
+                    <input type="hidden" id="rewardEditId">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name (English)</label>
+                                <input type="text" id="rewardNameEn" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Name (Bengali)</label>
+                                <input type="text" id="rewardNameBn" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Description (English)</label>
+                                <textarea id="rewardDescEn" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Description (Bengali)</label>
+                                <textarea id="rewardDescBn" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="url" id="rewardImage" class="form-control">
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Reward Type</label>
+                                <select id="rewardType" class="form-control">
+                                    <option value="discount">Discount</option>
+                                    <option value="free_item">Free Item</option>
+                                    <option value="points">Points</option>
+                                    <option value="coupon">Coupon</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Value (%)</label>
+                                <input type="number" id="rewardValue" class="form-control" value="10" min="0" max="100">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Expires In (mins)</label>
+                                <input type="number" id="rewardExpiresIn" class="form-control" value="15" min="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Probability (0-1)</label>
+                        <input type="number" id="rewardProbability" class="form-control" value="0.1" min="0" max="1" step="0.01">
+                        <small class="text-muted">e.g., 0.1 = 10% chance of winning</small>
+                    </div>
+                    <div class="form-check" id="rewardActiveGroup" style="display: none;">
+                        <input type="checkbox" id="rewardIsActive" checked>
+                        <label>Active</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('rewardModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'api/admin';
+        let authToken = null;
+        let adminData = null;
+        let currentSection = 'dashboard';
+        let categoriesCache = [];
+
+        function formatPrice(price) {
+            return '৳' + Number(price).toLocaleString();
+        }
+
+        function timeAgo(datetime) {
+            const time = new Date(datetime).getTime();
+            const diff = (Date.now() - time) / 1000;
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return Math.floor(diff / 60) + ' mins ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+            return new Date(datetime).toLocaleDateString();
+        }
+
+        async function api(endpoint, options = {}) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+            
+            try {
+                const response = await fetch(`${API_BASE}/${endpoint}`, { ...options, headers });
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    logout();
+                    return null;
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                return { error: 'Network error' };
+            }
+        }
+
+        function showLoading(containerId) {
+            document.getElementById(containerId).innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function navigateTo(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            document.getElementById('section-' + section).classList.add('active');
+            document.querySelector(`[data-section="${section}"]`)?.classList.add('active');
+            currentSection = section;
+            loadSectionData(section);
+        }
+
+        async function loadSectionData(section) {
+            switch(section) {
+                case 'dashboard': await loadDashboard(); break;
+                case 'orders': await loadOrders(); break;
+                case 'categories': await loadCategories(); break;
+                case 'menu-items': await loadMenuItems(); break;
+                case 'tables': await loadTables(); break;
+                case 'payments': await loadPayments(); break;
+                case 'reviews': await loadReviews(); break;
+                case 'rewards': await loadRewards(); break;
+                case 'settings': await loadSettings(); break;
+            }
+        }
+
+        async function loadDashboard() {
+            showLoading('dashboardContent');
+            const data = await api('dashboard.php');
+            if (!data || data.error) return;
+            
+            const { stats, pending_orders } = data;
+            document.getElementById('pendingBadge').textContent = stats.pending_orders;
+            
+            document.getElementById('dashboardContent').innerHTML = `
+                <div class="row mb-4">
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #dbeafe; color: #2563eb;">
+                                <span class="material-icons-outlined">receipt_long</span>
+                            </div>
+                            <h3>${stats.total_orders}</h3>
+                            <p>Today's Orders</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #d1fae5; color: #059669;">
+                                <span class="material-icons-outlined">payments</span>
+                            </div>
+                            <h3>${formatPrice(stats.total_revenue)}</h3>
+                            <p>Today's Revenue</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #fef3c7; color: #d97706;">
+                                <span class="material-icons-outlined">pending_actions</span>
+                            </div>
+                            <h3 class="${stats.pending_orders > 0 ? 'pulse text-warning' : ''}">${stats.pending_orders}</h3>
+                            <p>Pending Orders</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #ede9fe; color: #7c3aed;">
+                                <span class="material-icons-outlined">table_restaurant</span>
+                            </div>
+                            <h3>${stats.tables_busy}/${stats.tables_total}</h3>
+                            <p>Tables Occupied</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="table-card" style="padding: 20px;">
+                            <div class="d-flex justify-between align-center mb-3">
+                                <h3 style="font-size: 18px; font-weight: 600;">Pending Orders</h3>
+                                <button class="btn btn-sm btn-outline-primary" onclick="navigateTo('orders')">View All</button>
+                            </div>
+                            <div id="pendingOrdersList">
+                                ${pending_orders.length === 0 ? `
+                                    <div class="empty-state">
+                                        <span class="material-icons-outlined">check_circle</span>
+                                        <p>No pending orders</p>
+                                    </div>
+                                ` : pending_orders.map(order => `
+                                    <div class="order-card status-${order.status}">
+                                        <div class="d-flex justify-between align-center">
+                                            <div>
+                                                <strong>Order #${order.id}</strong>
+                                                <small class="text-muted" style="display: block;">Table ${order.table_number} • ${timeAgo(order.created_at)}</small>
+                                            </div>
+                                            <span class="status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                                        </div>
+                                        <p class="text-muted" style="font-size: 13px; margin: 10px 0;">${order.items_summary || 'No items'}</p>
+                                        <div class="d-flex justify-between align-center">
+                                            <strong>${formatPrice(order.total_amount)}</strong>
+                                            <div class="btn-group">
+                                                ${order.status === 'received' ? `<button class="btn btn-sm btn-primary" onclick="updateOrderStatus(${order.id}, 'cooking')">Start Cooking</button>` : ''}
+                                                ${order.status === 'cooking' ? `<button class="btn btn-sm btn-info" onclick="updateOrderStatus(${order.id}, 'ready')">Mark Ready</button>` : ''}
+                                                ${order.status === 'ready' ? `<button class="btn btn-sm btn-success" onclick="updateOrderStatus(${order.id}, 'delivered')">Confirm Delivery</button>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="table-card" style="padding: 20px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">Quick Actions</h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <button class="btn btn-outline-primary" onclick="navigateTo('menu-items'); setTimeout(() => openModal('menuItemModal'), 100);">
+                                    <span class="material-icons-outlined me-2">add_circle</span> Add Menu Item
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="navigateTo('tables'); setTimeout(() => openModal('tableModal'), 100);">
+                                    <span class="material-icons-outlined me-2">table_restaurant</span> Add Table
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="navigateTo('categories')">
+                                    <span class="material-icons-outlined me-2">category</span> Manage Categories
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="navigateTo('rewards')">
+                                    <span class="material-icons-outlined me-2">emoji_events</span> Manage Rewards
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadOrders() {
+            showLoading('ordersContent');
+            const statusFilter = document.getElementById('orderStatusFilter')?.value || '';
+            const dateFilter = document.getElementById('orderDateFilter')?.value || new Date().toISOString().split('T')[0];
+            
+            const data = await api(`orders.php?status=${statusFilter}&date=${dateFilter}`);
+            if (!data || data.error) return;
+            
+            document.getElementById('ordersContent').innerHTML = `
+                <div class="filter-bar">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="orderStatusFilter" class="form-control" onchange="loadOrders()">
+                            <option value="">All Statuses</option>
+                            <option value="received" ${statusFilter === 'received' ? 'selected' : ''}>Received</option>
+                            <option value="cooking" ${statusFilter === 'cooking' ? 'selected' : ''}>Cooking</option>
+                            <option value="ready" ${statusFilter === 'ready' ? 'selected' : ''}>Ready</option>
+                            <option value="delivered" ${statusFilter === 'delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="cancelled" ${statusFilter === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="orderDateFilter" class="form-control" value="${dateFilter}" onchange="loadOrders()">
+                    </div>
+                    <button class="btn btn-secondary" onclick="document.getElementById('orderStatusFilter').value=''; document.getElementById('orderDateFilter').value='${new Date().toISOString().split('T')[0]}'; loadOrders();">Reset</button>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Table</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.orders.length === 0 ? `<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">No orders found</td></tr>` : 
+                            data.orders.map(order => `
+                                <tr>
+                                    <td><strong>#${order.id}</strong></td>
+                                    <td>Table ${order.table_number}</td>
+                                    <td class="text-truncate" style="max-width: 200px;" title="${order.items_summary || ''}">${order.items_summary || '-'}</td>
+                                    <td><strong>${formatPrice(order.total_amount)}</strong></td>
+                                    <td><span class="status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span></td>
+                                    <td>${timeAgo(order.created_at)}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            ${order.status === 'received' ? `<button class="btn btn-sm btn-primary" onclick="updateOrderStatus(${order.id}, 'cooking')"><i class="fas fa-fire"></i> Cook</button>` : ''}
+                                            ${order.status === 'cooking' ? `<button class="btn btn-sm btn-info" onclick="updateOrderStatus(${order.id}, 'ready')"><i class="fas fa-bell"></i> Ready</button>` : ''}
+                                            ${order.status === 'ready' ? `<button class="btn btn-sm btn-success" onclick="updateOrderStatus(${order.id}, 'delivered')"><i class="fas fa-check"></i> Deliver</button>` : ''}
+                                            ${!['delivered', 'cancelled'].includes(order.status) ? `<button class="btn btn-sm btn-outline-danger" onclick="updateOrderStatus(${order.id}, 'cancelled')"><i class="fas fa-times"></i></button>` : ''}
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            if (status === 'cancelled' && !confirm('Cancel this order?')) return;
+            
+            const data = await api('orders.php', {
+                method: 'PUT',
+                body: JSON.stringify({ order_id: orderId, status: status })
+            });
+            
+            if (data && data.success) {
+                loadSectionData(currentSection);
+            } else {
+                alert('Error: ' + (data?.error || 'Failed to update'));
+            }
+        }
+
+        async function loadCategories() {
+            showLoading('categoriesContent');
+            const data = await api('categories.php');
+            if (!data || data.error) return;
+            
+            categoriesCache = data.categories;
+            
+            document.getElementById('categoriesContent').innerHTML = `
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Icon</th>
+                                <th>Name (EN)</th>
+                                <th>Name (BN)</th>
+                                <th>Sort Order</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.categories.length === 0 ? `<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">No categories found</td></tr>` :
+                            data.categories.map(cat => `
+                                <tr>
+                                    <td><code style="background: var(--gray-100); padding: 2px 6px; border-radius: 4px;">${cat.id}</code></td>
+                                    <td><span class="material-icons-outlined">${cat.icon}</span></td>
+                                    <td>${cat.name_en}</td>
+                                    <td>${cat.name_bn || '-'}</td>
+                                    <td>${cat.sort_order}</td>
+                                    <td><span class="badge ${cat.is_active ? 'badge-success' : 'badge-secondary'}">${cat.is_active ? 'Active' : 'Inactive'}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick='editCategory(${JSON.stringify(cat)})'><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory('${cat.id}')"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function resetCategoryForm() {
+            document.getElementById('categoryModalTitle').textContent = 'Add Category';
+            document.getElementById('categoryEditId').value = '';
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryNameEn').value = '';
+            document.getElementById('categoryNameBn').value = '';
+            document.getElementById('categoryIcon').value = 'category';
+            document.getElementById('categorySortOrder').value = '0';
+            document.getElementById('categoryIsActive').checked = true;
+            document.getElementById('categoryIdGroup').style.display = 'block';
+            document.getElementById('categoryActiveGroup').style.display = 'none';
+        }
+
+        function editCategory(cat) {
+            document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+            document.getElementById('categoryEditId').value = cat.id;
+            document.getElementById('categoryId').value = cat.id;
+            document.getElementById('categoryNameEn').value = cat.name_en;
+            document.getElementById('categoryNameBn').value = cat.name_bn || '';
+            document.getElementById('categoryIcon').value = cat.icon;
+            document.getElementById('categorySortOrder').value = cat.sort_order;
+            document.getElementById('categoryIsActive').checked = cat.is_active;
+            document.getElementById('categoryIdGroup').style.display = 'none';
+            document.getElementById('categoryActiveGroup').style.display = 'flex';
+            openModal('categoryModal');
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Delete this category?')) return;
+            const data = await api('categories.php', { method: 'DELETE', body: JSON.stringify({ id }) });
+            if (data && data.success) loadCategories();
+            else alert('Error: ' + (data?.error || 'Failed to delete'));
+        }
+
+        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('categoryEditId').value;
+            const payload = {
+                id: editId || document.getElementById('categoryId').value,
+                name_en: document.getElementById('categoryNameEn').value,
+                name_bn: document.getElementById('categoryNameBn').value,
+                icon: document.getElementById('categoryIcon').value,
+                sort_order: document.getElementById('categorySortOrder').value,
+                is_active: document.getElementById('categoryIsActive').checked
+            };
+            
+            const data = await api('categories.php', {
+                method: editId ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            if (data && data.success) {
+                closeModal('categoryModal');
+                resetCategoryForm();
+                loadCategories();
+            } else {
+                alert('Error: ' + (data?.error || 'Failed to save'));
+            }
+        });
+
+        async function loadMenuItems() {
+            showLoading('menuItemsContent');
+            const categoryFilter = document.getElementById('menuCategoryFilter')?.value || '';
+            const data = await api(`menu-items.php?category=${categoryFilter}`);
+            if (!data || data.error) return;
+            
+            categoriesCache = data.categories;
+            updateCategorySelect();
+            
+            document.getElementById('menuItemsContent').innerHTML = `
+                <div class="filter-bar">
+                    <div class="form-group">
+                        <label>Filter by Category</label>
+                        <select id="menuCategoryFilter" class="form-control" onchange="loadMenuItems()">
+                            <option value="">All Categories</option>
+                            ${data.categories.map(cat => `<option value="${cat.id}" ${categoryFilter === cat.id ? 'selected' : ''}>${cat.name_en}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.items.length === 0 ? `<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">No menu items found</td></tr>` :
+                            data.items.map(item => `
+                                <tr>
+                                    <td>
+                                        ${item.image_url ? `<img src="${item.image_url}" class="img-thumb" alt="">` : 
+                                        `<div class="img-placeholder"><span class="material-icons-outlined text-muted">image</span></div>`}
+                                    </td>
+                                    <td>
+                                        <strong>${item.name_en}</strong>
+                                        ${item.is_trending ? '<span class="badge badge-warning" style="margin-left: 5px;">Trending</span>' : ''}
+                                        <br><small class="text-muted">${item.name_bn || ''}</small>
+                                    </td>
+                                    <td>${item.category_name || '-'}</td>
+                                    <td><strong>${formatPrice(item.price)}</strong></td>
+                                    <td><span class="text-warning">★</span> ${Number(item.rating).toFixed(1)} <small class="text-muted">(${item.likes} likes)</small></td>
+                                    <td><span class="badge ${item.is_available ? 'badge-success' : 'badge-danger'}">${item.is_available ? 'Available' : 'Unavailable'}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick='editMenuItem(${JSON.stringify(item)})'><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMenuItem(${item.id})"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('menuItemCategory');
+            select.innerHTML = categoriesCache.map(cat => `<option value="${cat.id}">${cat.name_en}</option>`).join('');
+        }
+
+        function resetMenuItemForm() {
+            document.getElementById('menuItemModalTitle').textContent = 'Add Menu Item';
+            document.getElementById('menuItemEditId').value = '';
+            document.getElementById('menuItemCategory').value = categoriesCache[0]?.id || '';
+            document.getElementById('menuItemNameEn').value = '';
+            document.getElementById('menuItemNameBn').value = '';
+            document.getElementById('menuItemDescEn').value = '';
+            document.getElementById('menuItemDescBn').value = '';
+            document.getElementById('menuItemPrice').value = '';
+            document.getElementById('menuItemImage').value = '';
+            document.getElementById('menuItemWeight').value = '';
+            document.getElementById('menuItemTags').value = '';
+            document.getElementById('menuItemMood').value = '';
+            document.getElementById('menuItemAllergens').value = '';
+            document.getElementById('menuItemAvailable').checked = true;
+            document.getElementById('menuItemTrending').checked = false;
+        }
+
+        function editMenuItem(item) {
+            document.getElementById('menuItemModalTitle').textContent = 'Edit Menu Item';
+            document.getElementById('menuItemEditId').value = item.id;
+            document.getElementById('menuItemCategory').value = item.category_id;
+            document.getElementById('menuItemNameEn').value = item.name_en;
+            document.getElementById('menuItemNameBn').value = item.name_bn || '';
+            document.getElementById('menuItemDescEn').value = item.description_en || '';
+            document.getElementById('menuItemDescBn').value = item.description_bn || '';
+            document.getElementById('menuItemPrice').value = item.price;
+            document.getElementById('menuItemImage').value = item.image_url || '';
+            document.getElementById('menuItemWeight').value = item.weight || '';
+            document.getElementById('menuItemAllergens').value = item.allergens || '';
+            document.getElementById('menuItemAvailable').checked = item.is_available;
+            document.getElementById('menuItemTrending').checked = item.is_trending;
+            
+            try {
+                const tags = item.tags ? JSON.parse(item.tags) : [];
+                const mood = item.mood ? JSON.parse(item.mood) : [];
+                document.getElementById('menuItemTags').value = tags.join(', ');
+                document.getElementById('menuItemMood').value = mood.join(', ');
+            } catch(e) {
+                document.getElementById('menuItemTags').value = '';
+                document.getElementById('menuItemMood').value = '';
+            }
+            
+            openModal('menuItemModal');
+        }
+
+        async function deleteMenuItem(id) {
+            if (!confirm('Delete this menu item?')) return;
+            const data = await api('menu-items.php', { method: 'DELETE', body: JSON.stringify({ id }) });
+            if (data && data.success) loadMenuItems();
+            else alert('Error: ' + (data?.error || 'Failed to delete'));
+        }
+
+        document.getElementById('menuItemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('menuItemEditId').value;
+            const payload = {
+                id: editId ? parseInt(editId) : undefined,
+                category_id: document.getElementById('menuItemCategory').value,
+                name_en: document.getElementById('menuItemNameEn').value,
+                name_bn: document.getElementById('menuItemNameBn').value,
+                description_en: document.getElementById('menuItemDescEn').value,
+                description_bn: document.getElementById('menuItemDescBn').value,
+                price: document.getElementById('menuItemPrice').value,
+                image_url: document.getElementById('menuItemImage').value,
+                weight: document.getElementById('menuItemWeight').value,
+                allergens: document.getElementById('menuItemAllergens').value,
+                tags: document.getElementById('menuItemTags').value,
+                mood: document.getElementById('menuItemMood').value,
+                is_available: document.getElementById('menuItemAvailable').checked,
+                is_trending: document.getElementById('menuItemTrending').checked
+            };
+            
+            const data = await api('menu-items.php', {
+                method: editId ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            if (data && data.success) {
+                closeModal('menuItemModal');
+                resetMenuItemForm();
+                loadMenuItems();
+            } else {
+                alert('Error: ' + (data?.error || 'Failed to save'));
+            }
+        });
+
+        async function loadTables() {
+            showLoading('tablesContent');
+            const data = await api('tables.php');
+            if (!data || data.error) return;
+            
+            const baseUrl = window.location.origin;
+            
+            document.getElementById('tablesContent').innerHTML = `
+                <div class="table-grid">
+                    ${data.tables.length === 0 ? `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <span class="material-icons-outlined">table_restaurant</span>
+                            <p>No tables added yet</p>
+                        </div>
+                    ` : data.tables.map(table => `
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="qr-container" id="qr-${table.id}"></div>
+                                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Table ${table.table_number}</h3>
+                                <p class="text-muted"><i class="fas fa-users me-2"></i>${table.capacity} seats</p>
+                                <span class="badge mb-3 ${table.status === 'available' ? 'badge-success' : table.status === 'busy' ? 'badge-danger' : 'badge-warning'}">${table.status.charAt(0).toUpperCase() + table.status.slice(1)}</span>
+                                <div class="d-flex gap-2 justify-center mt-3">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="downloadQR(${table.table_number})"><i class="fas fa-download"></i> QR</button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick='editTable(${JSON.stringify(table)})'><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTable(${table.id})"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                data.tables.forEach(table => {
+                    const container = document.getElementById(`qr-${table.id}`);
+                    if (container) {
+                        const url = `${baseUrl}/?table=${table.table_number}`;
+                        QRCode.toCanvas(document.createElement('canvas'), url, { width: 120, margin: 1 }, (err, canvas) => {
+                            if (!err) container.appendChild(canvas);
+                        });
+                    }
+                });
+            }, 100);
+        }
+
+        function downloadQR(tableNum) {
+            const url = `${window.location.origin}/?table=${tableNum}`;
+            QRCode.toDataURL(url, { width: 300, margin: 2 }, (err, dataUrl) => {
+                if (!err) {
+                    const link = document.createElement('a');
+                    link.download = `table-${tableNum}-qr.png`;
+                    link.href = dataUrl;
+                    link.click();
+                }
+            });
+        }
+
+        function resetTableForm() {
+            document.getElementById('tableModalTitle').textContent = 'Add Table';
+            document.getElementById('tableEditId').value = '';
+            document.getElementById('tableNumber').value = '';
+            document.getElementById('tableCapacity').value = '4';
+            document.getElementById('tableStatus').value = 'available';
+            document.getElementById('tableNumberGroup').style.display = 'block';
+            document.getElementById('tableStatusGroup').style.display = 'none';
+        }
+
+        function editTable(table) {
+            document.getElementById('tableModalTitle').textContent = 'Edit Table';
+            document.getElementById('tableEditId').value = table.id;
+            document.getElementById('tableNumber').value = table.table_number;
+            document.getElementById('tableCapacity').value = table.capacity;
+            document.getElementById('tableStatus').value = table.status;
+            document.getElementById('tableNumberGroup').style.display = 'none';
+            document.getElementById('tableStatusGroup').style.display = 'block';
+            openModal('tableModal');
+        }
+
+        async function deleteTable(id) {
+            if (!confirm('Delete this table?')) return;
+            const data = await api('tables.php', { method: 'DELETE', body: JSON.stringify({ id }) });
+            if (data && data.success) loadTables();
+            else alert('Error: ' + (data?.error || 'Failed to delete'));
+        }
+
+        document.getElementById('tableForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('tableEditId').value;
+            const payload = {
+                id: editId ? parseInt(editId) : undefined,
+                table_number: document.getElementById('tableNumber').value,
+                capacity: document.getElementById('tableCapacity').value,
+                status: document.getElementById('tableStatus').value
+            };
+            
+            const data = await api('tables.php', {
+                method: editId ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            if (data && data.success) {
+                closeModal('tableModal');
+                resetTableForm();
+                loadTables();
+            } else {
+                alert('Error: ' + (data?.error || 'Failed to save'));
+            }
+        });
+
+        async function loadPayments() {
+            showLoading('paymentsContent');
+            const data = await api('payments.php');
+            if (!data || data.error) return;
+            
+            document.getElementById('paymentsContent').innerHTML = `
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Account Number</th>
+                                <th>Account Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.payments.length === 0 ? `<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">No payment methods found</td></tr>` :
+                            data.payments.map(method => `
+                                <tr>
+                                    <td><span class="material-icons-outlined">${method.icon}</span></td>
+                                    <td>
+                                        <strong>${method.name_en}</strong>
+                                        <br><small class="text-muted">${method.name_bn || ''}</small>
+                                    </td>
+                                    <td><span class="badge badge-info">${method.method_type.charAt(0).toUpperCase() + method.method_type.slice(1)}</span></td>
+                                    <td>${method.account_number || '-'}</td>
+                                    <td>${method.account_name || '-'}</td>
+                                    <td><span class="badge ${method.is_active ? 'badge-success' : 'badge-secondary'}">${method.is_active ? 'Active' : 'Inactive'}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick='editPayment(${JSON.stringify(method)})'><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deletePayment(${method.id})"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function resetPaymentForm() {
+            document.getElementById('paymentModalTitle').textContent = 'Add Payment Method';
+            document.getElementById('paymentEditId').value = '';
+            document.getElementById('paymentNameEn').value = '';
+            document.getElementById('paymentNameBn').value = '';
+            document.getElementById('paymentType').value = 'cash';
+            document.getElementById('paymentIcon').value = 'payments';
+            document.getElementById('paymentAccountNumber').value = '';
+            document.getElementById('paymentAccountName').value = '';
+            document.getElementById('paymentInstructions').value = '';
+            document.getElementById('paymentSortOrder').value = '0';
+            document.getElementById('paymentIsActive').checked = true;
+            document.getElementById('paymentActiveGroup').style.display = 'none';
+        }
+
+        function editPayment(method) {
+            document.getElementById('paymentModalTitle').textContent = 'Edit Payment Method';
+            document.getElementById('paymentEditId').value = method.id;
+            document.getElementById('paymentNameEn').value = method.name_en;
+            document.getElementById('paymentNameBn').value = method.name_bn || '';
+            document.getElementById('paymentType').value = method.method_type;
+            document.getElementById('paymentIcon').value = method.icon;
+            document.getElementById('paymentAccountNumber').value = method.account_number || '';
+            document.getElementById('paymentAccountName').value = method.account_name || '';
+            document.getElementById('paymentInstructions').value = method.instructions || '';
+            document.getElementById('paymentSortOrder').value = method.sort_order;
+            document.getElementById('paymentIsActive').checked = method.is_active;
+            document.getElementById('paymentActiveGroup').style.display = 'flex';
+            openModal('paymentModal');
+        }
+
+        async function deletePayment(id) {
+            if (!confirm('Delete this payment method?')) return;
+            const data = await api('payments.php', { method: 'DELETE', body: JSON.stringify({ id }) });
+            if (data && data.success) loadPayments();
+            else alert('Error: ' + (data?.error || 'Failed to delete'));
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('paymentEditId').value;
+            const payload = {
+                id: editId ? parseInt(editId) : undefined,
+                name_en: document.getElementById('paymentNameEn').value,
+                name_bn: document.getElementById('paymentNameBn').value,
+                method_type: document.getElementById('paymentType').value,
+                icon: document.getElementById('paymentIcon').value,
+                account_number: document.getElementById('paymentAccountNumber').value,
+                account_name: document.getElementById('paymentAccountName').value,
+                instructions: document.getElementById('paymentInstructions').value,
+                sort_order: document.getElementById('paymentSortOrder').value,
+                is_active: document.getElementById('paymentIsActive').checked
+            };
+            
+            const data = await api('payments.php', {
+                method: editId ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            if (data && data.success) {
+                closeModal('paymentModal');
+                resetPaymentForm();
+                loadPayments();
+            } else {
+                alert('Error: ' + (data?.error || 'Failed to save'));
+            }
+        });
+
+        async function loadReviews() {
+            showLoading('reviewsContent');
+            const data = await api('reviews.php');
+            if (!data || data.error) return;
+            
+            const { reviews, stats } = data;
+            
+            document.getElementById('reviewsContent').innerHTML = `
+                <div class="row mb-4">
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #dbeafe; color: #2563eb;">
+                                <span class="material-icons-outlined">rate_review</span>
+                            </div>
+                            <h3>${stats.total}</h3>
+                            <p>Total Reviews</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #fef3c7; color: #d97706;">
+                                <span class="material-icons-outlined">star</span>
+                            </div>
+                            <h3>${stats.avg_rating}</h3>
+                            <p>Average Rating</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #d1fae5; color: #059669;">
+                                <span class="material-icons-outlined">thumb_up</span>
+                            </div>
+                            <h3>${stats.positive}</h3>
+                            <p>Positive (4-5 stars)</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-stat">
+                            <div class="icon" style="background: #ede9fe; color: #7c3aed;">
+                                <span class="material-icons-outlined">auto_awesome</span>
+                            </div>
+                            <h3>${stats.five_star}</h3>
+                            <p>5-Star Reviews</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Rating</th>
+                                <th>Comment</th>
+                                <th>Item/Order</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reviews.length === 0 ? `<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">No reviews yet</td></tr>` :
+                            reviews.map(review => `
+                                <tr style="${!review.is_visible ? 'opacity: 0.6;' : ''}">
+                                    <td><span class="me-2">${review.avatar}</span>${review.user_name}</td>
+                                    <td>${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">${review.comment || '-'}</td>
+                                    <td><small class="text-muted">${review.item_name || (review.order_id ? 'Order #' + review.order_id : '-')}</small></td>
+                                    <td><small>${timeAgo(review.created_at)}</small></td>
+                                    <td><span class="badge ${review.is_visible ? 'badge-success' : 'badge-secondary'}">${review.is_visible ? 'Visible' : 'Hidden'}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleReviewVisibility(${review.id})"><i class="fas fa-eye${review.is_visible ? '-slash' : ''}"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteReview(${review.id})"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function toggleReviewVisibility(id) {
+            const data = await api('reviews.php', {
+                method: 'PUT',
+                body: JSON.stringify({ id, action: 'toggle_visibility' })
+            });
+            if (data && data.success) loadReviews();
+            else alert('Error: ' + (data?.error || 'Failed to update'));
+        }
+
+        async function deleteReview(id) {
+            if (!confirm('Delete this review?')) return;
+            const data = await api('reviews.php', { method: 'DELETE', body: JSON.stringify({ id }) });
+            if (data && data.success) loadReviews();
+            else alert('Error: ' + (data?.error || 'Failed to delete'));
+        }
+
+        async function loadRewards() {
+            showLoading('rewardsContent');
+            const data = await api('rewards.php');
+            if (!data || data.error) return;
+            
+            document.getElementById('rewardsContent').innerHTML = `
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Probability:</strong> Set the chance of winning each reward (0 to 1). Total should add up to 1 or less.
+                </div>
+                <div class="reward-grid">
+                    ${data.rewards.length === 0 ? `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <span class="material-icons-outlined">emoji_events</span>
+                            <p>No rewards added yet</p>
+                        </div>
+                    ` : data.rewards.map(reward => `
+                        <div class="card" style="${!reward.is_active ? 'opacity: 0.7;' : ''}">
+                            ${reward.image_url ? `<img src="${reward.image_url}" class="card-img-top" alt="">` : 
+                            `<div class="card-img-top d-flex align-center justify-center" style="background: var(--gray-100);">
+                                <span class="material-icons-outlined" style="font-size: 48px; color: var(--gray-400);">emoji_events</span>
+                            </div>`}
+                            <div class="card-body">
+                                <div class="d-flex justify-between align-center mb-3">
+                                    <h3 style="font-size: 16px; font-weight: 600;">${reward.name_en}</h3>
+                                    <span class="badge ${reward.is_active ? 'badge-success' : 'badge-secondary'}">${reward.is_active ? 'Active' : 'Inactive'}</span>
+                                </div>
+                                <p class="text-muted" style="font-size: 13px; margin-bottom: 12px;">${reward.description_en || ''}</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge-primary">${reward.reward_type.charAt(0).toUpperCase() + reward.reward_type.slice(1)}</span>
+                                    ${reward.reward_value ? `<span class="badge badge-info">Value: ${reward.reward_value}%</span>` : ''}
+                                    <span class="badge badge-warning">Prob: ${(reward.probability * 100).toFixed(0)}%</span>
+                                    <span class="badge badge-secondary">Expires: ${reward.expires_in} mins</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick='editReward(${JSON.stringify(reward)})'><i class="fas fa-edit me-2"></i>Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteReward(${reward.id})"><i class="fas fa-trash me-2"></i>Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function resetRewardForm() {
+            document.getElementById('rewardModalTitle').textContent = 'Add Reward';
+            document.getElementById('rewardEditId').value = '';
+            document.getElementById('rewardNameEn').value = '';
+            document.getElementById('rewardNameBn').value = '';
+            document.getElementById('rewardDescEn').value = '';
+            document.getElementById('rewardDescBn').value = '';
+            document.getElementById('rewardImage').value = '';
+            document.getElementById('rewardType').value = 'discount';
+            document.getElementById('rewardValue').value = '10';
+            document.getElementById('rewardExpiresIn').value = '15';
+            document.getElementById('rewardProbability').value = '0.1';
+            document.getElementById('rewardIsActive').checked = true;
+            document.getElementById('rewardActiveGroup').style.display = 'none';
+        }
+
+        function editReward(reward) {
+            document.getElementById('rewardModalTitle').textContent = 'Edit Reward';
+            document.getElementById('rewardEditId').value = reward.id;
+            document.getElementById('rewardNameEn').value = reward.name_en;
+            document.getElementById('rewardNameBn').value = reward.name_bn || '';
+            document.getElementById('rewardDescEn').value = reward.description_en || '';
+            document.getElementById('rewardDescBn').value = reward.description_bn || '';
+            document.getElementById('rewardImage').value = reward.image_url || '';
+            document.getElementById('rewardType').value = reward.reward_type;
+            document.getElementById('rewardValue').value = reward.reward_value;
+            document.getElementById('rewardExpiresIn').value = reward.expires_in;
+            document.getElementById('rewardProbability').value = reward.probability;
+            document.getElementById('rewardIsActive').checked = reward.is_active;
+            document.getElementById('rewardActiveGroup').style.display = 'flex';
+            openModal('rewardModal');
+        }
+
+        async function deleteReward(id) {
+            if (!confirm('Delete this reward?')) return;
+            const data = await api('rewards.php', { method: 'DELETE', body: JSON.stringify({ id }) });
+            if (data && data.success) loadRewards();
+            else alert('Error: ' + (data?.error || 'Failed to delete'));
+        }
+
+        document.getElementById('rewardForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('rewardEditId').value;
+            const payload = {
+                id: editId ? parseInt(editId) : undefined,
+                name_en: document.getElementById('rewardNameEn').value,
+                name_bn: document.getElementById('rewardNameBn').value,
+                description_en: document.getElementById('rewardDescEn').value,
+                description_bn: document.getElementById('rewardDescBn').value,
+                image_url: document.getElementById('rewardImage').value,
+                reward_type: document.getElementById('rewardType').value,
+                reward_value: document.getElementById('rewardValue').value,
+                expires_in: document.getElementById('rewardExpiresIn').value,
+                probability: document.getElementById('rewardProbability').value,
+                is_active: document.getElementById('rewardIsActive').checked
+            };
+            
+            const data = await api('rewards.php', {
+                method: editId ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            if (data && data.success) {
+                closeModal('rewardModal');
+                resetRewardForm();
+                loadRewards();
+            } else {
+                alert('Error: ' + (data?.error || 'Failed to save'));
+            }
+        });
+
+        async function loadSettings() {
+            showLoading('settingsContent');
+            const data = await api('settings.php');
+            if (!data || data.error) return;
+            
+            const { restaurant, admin } = data;
+            
+            document.getElementById('settingsContent').innerHTML = `
+                <div class="row">
+                    <div class="col-8">
+                        <div class="table-card" style="padding: 20px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Restaurant Information</h3>
+                            <form id="restaurantForm">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Restaurant Name (English)</label>
+                                            <input type="text" id="settingsNameEn" class="form-control" value="${restaurant?.name_en || ''}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Restaurant Name (Bengali)</label>
+                                            <input type="text" id="settingsNameBn" class="form-control" value="${restaurant?.name_bn || ''}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Tagline (English)</label>
+                                            <input type="text" id="settingsTaglineEn" class="form-control" value="${restaurant?.tagline_en || ''}">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Tagline (Bengali)</label>
+                                            <input type="text" id="settingsTaglineBn" class="form-control" value="${restaurant?.tagline_bn || ''}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="table-card" style="padding: 20px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Change Password</h3>
+                            <form id="passwordForm">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" id="currentPassword" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="newPassword" class="form-control" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" class="form-control" required minlength="6">
+                                </div>
+                                <button type="submit" class="btn btn-warning btn-block"><i class="fas fa-key me-2"></i>Update Password</button>
+                            </form>
+                        </div>
+                        <div class="table-card" style="padding: 20px; margin-top: 20px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">Admin Info</h3>
+                            <p style="margin-bottom: 8px;"><strong>Username:</strong> ${admin?.username || '-'}</p>
+                            <p style="margin-bottom: 8px;"><strong>Name:</strong> ${admin?.name || '-'}</p>
+                            <p style="margin-bottom: 0;"><strong>Last Login:</strong> ${admin?.last_login ? new Date(admin.last_login).toLocaleString() : 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('restaurantForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const payload = {
+                    action: 'update_restaurant',
+                    name_en: document.getElementById('settingsNameEn').value,
+                    name_bn: document.getElementById('settingsNameBn').value,
+                    tagline_en: document.getElementById('settingsTaglineEn').value,
+                    tagline_bn: document.getElementById('settingsTaglineBn').value
+                };
+                
+                const data = await api('settings.php', { method: 'PUT', body: JSON.stringify(payload) });
+                if (data && data.success) alert('Settings updated successfully!');
+                else alert('Error: ' + (data?.error || 'Failed to update'));
+            });
+            
+            document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newPass = document.getElementById('newPassword').value;
+                const confirmPass = document.getElementById('confirmPassword').value;
+                
+                if (newPass !== confirmPass) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                const payload = {
+                    action: 'update_password',
+                    current_password: document.getElementById('currentPassword').value,
+                    new_password: newPass,
+                    confirm_password: confirmPass
+                };
+                
+                const data = await api('settings.php', { method: 'PUT', body: JSON.stringify(payload) });
+                if (data && data.success) {
+                    alert('Password updated successfully!');
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    alert('Error: ' + (data?.error || 'Failed to update'));
+                }
+            });
+        }
+
+        async function login(username, password) {
+            const data = await api('auth.php?action=login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+            
+            if (data && data.success) {
+                authToken = data.token;
+                adminData = data.admin;
+                document.getElementById('adminName').textContent = adminData.name;
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('appContainer').classList.add('active');
+                loadDashboard();
+            } else {
+                document.getElementById('loginError').textContent = data?.error || 'Login failed';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            adminData = null;
+            document.getElementById('appContainer').classList.remove('active');
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            login(username, password);
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
+            link.addEventListener('click', () => {
+                navigateTo(link.dataset.section);
+            });
+        });
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal(modal.id);
+            });
+        });
+
+        document.getElementById('categoryModal').querySelector('.modal-close').addEventListener('click', resetCategoryForm);
+        document.getElementById('menuItemModal').querySelector('.modal-close').addEventListener('click', resetMenuItemForm);
+        document.getElementById('tableModal').querySelector('.modal-close').addEventListener('click', resetTableForm);
+        document.getElementById('paymentModal').querySelector('.modal-close').addEventListener('click', resetPaymentForm);
+        document.getElementById('rewardModal').querySelector('.modal-close').addEventListener('click', resetRewardForm);
+
+        setInterval(() => {
+            if (authToken && currentSection === 'dashboard') {
+                loadDashboard();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -11,14 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/auth_helpers.php';
 
-$token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-$payload = verifyToken($token);
-if (!$payload) {
-    jsonResponse(['error' => 'Unauthorized'], 401);
-}
-
+$payload = requireAuth();
 $restaurantId = $payload['restaurant_id'];
 $adminId = $payload['admin_id'];
 $db = getDB();
