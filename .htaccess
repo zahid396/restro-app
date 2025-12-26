@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /restroApp/
+
+# Don't rewrite files or directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route everything else through router.php
+RewriteRule ^(.*)$ router.php [QSA,L]
